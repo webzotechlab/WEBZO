@@ -1,0 +1,2226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>WEBZO — Custom Web Development &amp; Technical Digital Engineering</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --v:#020408;
+  --cy:#00D8E8;
+  --co:#0051FF;
+  --vi:#7B2CBF;
+  --em:#00C996;
+  --ti:#F4F8FC;
+  --gl:rgba(255,255,255,.06);
+  --gl-b:rgba(255,255,255,.22);
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:inherit}
+html,body{margin:0;background:var(--v);color:var(--ti);font:15px/1.6 Inter,sans-serif;-webkit-font-smoothing:antialiased}
+::selection{background:var(--cy);color:var(--v)}
+body{overflow:hidden}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+#sc{height:750vh}
+
+/* Soft Atmospheric Vignette */
+.fx-vignette{
+  position:fixed;inset:0;pointer-events:none;z-index:2;
+  background:radial-gradient(circle at 50% 48%, transparent 52%, rgba(2,4,8,.72) 100%);
+}
+
+/* Top Navigation Bar (Refractive Crystal Glass) */
+.nav{
+  position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;
+  display:flex;gap:14px;align-items:center;padding:11px 22px;
+  background:linear-gradient(135deg,rgba(255,255,255,.08) 0%,rgba(0,216,232,.04) 50%,rgba(8,14,28,.42) 100%);
+  backdrop-filter:blur(20px) saturate(190%) brightness(1.1);
+  -webkit-backdrop-filter:blur(20px) saturate(190%) brightness(1.1);
+  border-bottom:1px solid rgba(255,255,255,.18);
+  box-shadow:0 12px 36px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.28);
+  font:12px 'JetBrains Mono',monospace;z-index:6;flex-wrap:wrap;
+}
+.nav::after{
+  content:'';position:absolute;bottom:-1px;left:0;height:1.5px;width:var(--sp,0%);
+  background:linear-gradient(90deg,var(--cy),var(--co),var(--vi));
+  box-shadow:0 0 8px rgba(0,216,232,.55);transition:width .1s linear;
+}
+.brand-wrap{
+  display:flex;align-items:center;gap:8px;cursor:pointer;
+  padding-right:12px;border-right:1px solid rgba(255,255,255,.18);
+}
+.nav b{
+  font:800 19px Syne,sans-serif;letter-spacing:.15em;
+  color:var(--ti);transition:color .25s ease;
+}
+.brand-wrap:hover b{color:var(--cy)}
+.nav a,.nav button{
+  cursor:pointer;color:var(--ti);opacity:.78;background:none;border:0;font:inherit;
+  padding:6px 10px;border-radius:6px;transition:all .25s ease;position:relative;
+}
+.nav a:hover,.nav a.act{
+  opacity:1;color:var(--cy);background:rgba(255,255,255,.08);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22);
+}
+.nav a.act::before{
+  content:'';position:absolute;bottom:2px;left:10px;right:10px;height:1.5px;
+  background:var(--cy);
+}
+.snd-group{
+  display:flex;align-items:center;gap:6px;
+  background:linear-gradient(135deg,rgba(255,255,255,.1),rgba(0,216,232,.05));
+  border:1px solid rgba(255,255,255,.22);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3);
+  border-radius:999px;padding:2px 10px 2px 8px;
+}
+.eq-bars{display:inline-flex;align-items:flex-end;gap:2px;height:11px;width:15px}
+.eq-bars i{
+  display:block;width:2px;background:var(--cy);border-radius:1px;
+  height:3px;transition:height .2s ease;opacity:.9;
+}
+.snd-on .eq-bars i:nth-child(1){animation:eq1 1.4s ease-in-out infinite}
+.snd-on .eq-bars i:nth-child(2){animation:eq2 1.1s ease-in-out infinite .2s}
+.snd-on .eq-bars i:nth-child(3){animation:eq3 1.6s ease-in-out infinite .4s}
+.snd-on .eq-bars i:nth-child(4){animation:eq1 1.25s ease-in-out infinite .15s}
+@keyframes eq1{0%,100%{height:3px}50%{height:11px}}
+@keyframes eq2{0%,100%{height:10px}50%{height:4px}}
+@keyframes eq3{0%,100%{height:4px}50%{height:9px}}
+#snd,#calmMode{padding:4px 6px;font-size:11px;opacity:.95;color:var(--cy)}
+#calmMode{border-left:1px solid rgba(255,255,255,.2);padding-left:8px;color:#c5ecff}
+.nav .t{margin-left:auto;opacity:.68;font-size:11px;letter-spacing:.06em;display:flex;align-items:center;gap:8px}
+.pulse-dot{width:6px;height:6px;border-radius:50%;background:var(--em);box-shadow:0 0 6px rgba(0,201,150,.6);animation:pulseDot 2.2s infinite}
+@keyframes pulseDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.82)}}
+
+/* Interactive 3D Node Inspector Pill */
+.node-inspector{
+  position:fixed;top:62px;left:50%;transform:translateX(-50%) translateY(-10px);
+  z-index:5;pointer-events:none;opacity:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(0,216,232,.08));
+  backdrop-filter:blur(18px) saturate(180%);
+  -webkit-backdrop-filter:blur(18px) saturate(180%);
+  border:1px solid rgba(255,255,255,.28);border-radius:999px;
+  padding:6px 16px;font:11px 'JetBrains Mono',monospace;color:var(--cy);
+  letter-spacing:.1em;transition:all .25s ease;white-space:nowrap;
+  box-shadow:0 12px 32px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.35);
+}
+.node-inspector.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Section Overlays with 3D Perspective Stage */
+.ov{
+  position:fixed;left:4vw;bottom:7vh;max-width:min(590px,90vw);
+  opacity:0;transform:translateY(26px) scale(.96);
+  pointer-events:none;
+  perspective:1200px;
+  transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1);
+  z-index:3;
+}
+.ov.on{opacity:1;transform:translateY(0) scale(1)}
+
+/* ==========================================================================
+   TRUE 3D REFRACTIVE LIQUID-GLASS CARD (.g) WITH 3D PARALLAX DEPTH & TILT
+   Crystal-clear frosted glass that refracts the 3D WebGL world behind it,
+   tilts in 3D space with the cursor, and floats child layers along Z-axis!
+   ========================================================================== */
+@keyframes glassFloat3D{
+  0%,100%{translate:0 0 0}
+  50%{translate:0 -6px 8px}
+}
+@keyframes glassSheenSweep{
+  0%{transform:translateX(-140%) skewX(-22deg)}
+  45%,100%{transform:translateX(220%) skewX(-22deg)}
+}
+
+.g{
+  --rx:0deg;
+  --ry:0deg;
+  --gx:50%;
+  --gy:30%;
+  background:
+    radial-gradient(420px circle at var(--gx) var(--gy), rgba(255,255,255,.16) 0%, rgba(0,216,232,.08) 38%, transparent 72%),
+    linear-gradient(135deg, rgba(255,255,255,.11) 0%, rgba(16,32,64,.24) 48%, rgba(123,44,191,.10) 100%);
+  backdrop-filter:blur(18px) saturate(200%) brightness(1.12);
+  -webkit-backdrop-filter:blur(18px) saturate(200%) brightness(1.12);
+  border-radius:18px;
+  border-top:1px solid rgba(255,255,255,.42);
+  border-left:1px solid rgba(255,255,255,.28);
+  border-right:1px solid rgba(0,216,232,.28);
+  border-bottom:1px solid rgba(0,216,232,.32);
+  padding:26px 28px;
+  box-shadow:
+    0 28px 68px -12px rgba(0,0,0,.62),
+    0 0 38px rgba(0,216,232,.11),
+    inset 0 1.5px 1px 0 rgba(255,255,255,.48),
+    inset 1px 0 1px 0 rgba(255,255,255,.22),
+    inset 0 -1.5px 2px 0 rgba(0,216,232,.28),
+    inset 0 0 28px rgba(255,255,255,.04);
+  position:relative;
+  transform-style:preserve-3d;
+  transform:rotateX(var(--rx)) rotateY(var(--ry));
+  transition:transform .14s cubic-bezier(.16,1,.3,1),box-shadow .35s ease,border-color .35s ease;
+  animation:glassFloat3D 6.5s ease-in-out infinite;
+}
+.g:hover{
+  box-shadow:
+    0 34px 80px -10px rgba(0,0,0,.68),
+    0 0 48px rgba(0,216,232,.18),
+    inset 0 1.5px 2px 0 rgba(255,255,255,.62),
+    inset 1px 0 1.5px 0 rgba(255,255,255,.3),
+    inset 0 -2px 3px 0 rgba(0,216,232,.4),
+    inset 0 0 36px rgba(0,216,232,.08);
+}
+
+/* Top Prismatic Specular Edge Highlight + Animated Glass Light Sweep */
+.g::before{
+  content:'';position:absolute;inset:0;border-radius:18px;pointer-events:none;
+  background:linear-gradient(105deg, transparent 35%, rgba(255,255,255,.16) 48%, rgba(0,216,232,.18) 52%, transparent 65%);
+  background-size:240% 100%;
+  animation:glassShimmer 7s ease-in-out infinite;
+  mix-blend-mode:screen;
+}
+@keyframes glassShimmer{
+  0%,100%{background-position:180% 0}
+  50%{background-position:-60% 0}
+}
+
+/* 3D Rear Parallax Glass Depth Plate behind every .g card */
+.g::after{
+  content:'';position:absolute;inset:8px -8px -8px 8px;border-radius:18px;
+  pointer-events:none;
+  background:linear-gradient(135deg,rgba(0,216,232,.08),rgba(123,44,191,.08));
+  border:1px solid rgba(0,216,232,.22);
+  transform:translateZ(-22px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.15);
+  z-index:-1;
+}
+
+/* 3D Extruded Depth Layers inside .g */
+.kicker{
+  display:inline-flex;align-items:center;gap:8px;
+  font:600 10.5px/1 'JetBrains Mono',monospace;letter-spacing:.18em;text-transform:uppercase;
+  color:#c8f6ff;margin:0 0 12px;padding:7px 14px;
+  background:linear-gradient(135deg,rgba(255,255,255,.14),rgba(0,216,232,.09));
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border-top:1px solid rgba(255,255,255,.45);
+  border-left:1px solid rgba(255,255,255,.25);
+  border-right:1px solid rgba(0,216,232,.3);
+  border-bottom:1px solid rgba(0,216,232,.35);
+  border-radius:999px;
+  box-shadow:0 8px 20px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.4);
+  transform:translateZ(26px);
+}
+.kicker::before{
+  content:'';width:6px;height:6px;border-radius:50%;background:var(--cy);
+  box-shadow:0 0 8px var(--cy);
+}
+.ov h1,.ov h2{
+  font:800 clamp(26px,4.2vw,52px)/1.05 Syne,sans-serif;
+  margin:0 0 12px;letter-spacing:.02em;text-transform:uppercase;
+  background:linear-gradient(180deg,#FFFFFF 0%,#E2F7FF 65%,#9EEFFF 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 10px 22px rgba(0,0,0,.62));
+  transform:translateZ(42px);
+}
+.ov h2{font-size:clamp(21px,2.9vw,36px)}
+.ov p{
+  max-width:52ch;color:rgba(244,248,252,.9);margin:0 0 16px;font-size:14.5px;
+  text-shadow:0 4px 14px rgba(0,0,0,.75);
+  transform:translateZ(22px);
+}
+
+/* 3D Glass Feature Capsules inside Cards */
+.feat-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:9px;
+  margin:0 0 18px;font:11.5px 'JetBrains Mono',monospace;pointer-events:auto;
+  transform-style:preserve-3d;
+  transform:translateZ(32px);
+}
+.feat-pill{
+  padding:9px 12px;border-radius:10px;
+  background:linear-gradient(135deg,rgba(255,255,255,.12) 0%,rgba(0,216,232,.05) 100%);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border-top:1px solid rgba(255,255,255,.38);
+  border-left:1px solid rgba(255,255,255,.22);
+  border-right:1px solid rgba(0,216,232,.22);
+  border-bottom:1px solid rgba(0,216,232,.28);
+  box-shadow:0 6px 16px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.35);
+  color:#f4f8fc;display:flex;align-items:center;gap:8px;
+  cursor:pointer;transition:all .25s cubic-bezier(.16,1,.3,1);text-align:left;
+}
+.feat-pill i{
+  width:6px;height:6px;border-radius:50%;background:var(--cy);flex-shrink:0;
+  box-shadow:0 0 8px var(--cy);
+}
+.feat-pill:hover,.feat-pill.act{
+  background:linear-gradient(135deg,rgba(255,255,255,.22) 0%,rgba(0,216,232,.18) 100%);
+  border-color:rgba(255,255,255,.65);color:#fff;
+  transform:translateZ(14px) translateY(-2px) scale(1.02);
+  box-shadow:0 12px 26px rgba(0,0,0,.45),0 0 18px rgba(0,216,232,.25),inset 0 1px 0 rgba(255,255,255,.6);
+}
+
+/* 3D Glass Action Buttons */
+.btn-row{transform:translateZ(36px);transform-style:preserve-3d}
+.btn{
+  pointer-events:auto;cursor:pointer;
+  background:linear-gradient(135deg,rgba(255,255,255,.15) 0%,rgba(0,216,232,.14) 100%);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  color:#d8f9ff;
+  border-top:1px solid rgba(255,255,255,.55);
+  border-left:1px solid rgba(255,255,255,.32);
+  border-right:1px solid rgba(0,216,232,.5);
+  border-bottom:1px solid rgba(0,216,232,.55);
+  box-shadow:0 10px 24px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.48);
+  padding:12px 19px;font:600 11px 'JetBrains Mono',monospace;letter-spacing:.12em;
+  margin-right:8px;margin-bottom:6px;border-radius:10px;
+  transition:all .25s cubic-bezier(.16,1,.3,1);
+  text-transform:uppercase;
+  transform:translateZ(34px);
+}
+.btn:hover{
+  background:linear-gradient(135deg,rgba(255,255,255,.32) 0%,rgba(0,216,232,.38) 100%);
+  color:#fff;
+  transform:translateZ(48px) translateY(-2px);
+  box-shadow:0 16px 32px rgba(0,0,0,.48),0 0 24px rgba(0,216,232,.42),inset 0 1.5px 0 rgba(255,255,255,.75);
+  border-color:#fff;
+}
+.btn-sec{
+  border-top:1px solid rgba(255,255,255,.45);
+  border-left:1px solid rgba(255,255,255,.25);
+  border-right:1px solid rgba(168,85,247,.5);
+  border-bottom:1px solid rgba(168,85,247,.55);
+  color:#ebd6ff;
+  background:linear-gradient(135deg,rgba(255,255,255,.12) 0%,rgba(123,44,191,.24) 100%);
+}
+.btn-sec:hover{
+  background:linear-gradient(135deg,rgba(0,216,232,.35),rgba(123,44,191,.48));
+  color:#fff;
+  box-shadow:0 16px 32px rgba(0,0,0,.48),0 0 24px rgba(123,44,191,.48),inset 0 1.5px 0 rgba(255,255,255,.7);
+}
+.btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,.nav a:focus-visible{
+  outline:2px solid var(--cy);outline-offset:2px;
+}
+
+/* Right-side Live Engineering Telemetry Panel */
+.spec-dock{
+  position:fixed;right:4vw;top:13vh;width:min(330px,32vw);
+  z-index:3;pointer-events:auto;
+  perspective:1000px;
+  opacity:0;transform:translateX(18px);
+  transition:opacity .55s ease,transform .55s ease;
+}
+.spec-dock.on{opacity:1;transform:translateX(0)}
+@media(max-width:1024px){.spec-dock{display:none}}
+
+.spec-list{display:grid;gap:8px;margin-top:10px;font:11.5px 'JetBrains Mono',monospace;transform:translateZ(24px)}
+.spec-item{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:8px 11px;border-radius:8px;
+  background:linear-gradient(135deg,rgba(255,255,255,.1),rgba(0,216,232,.04));
+  border:1px solid rgba(255,255,255,.22);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.28);
+}
+.spec-item b{color:var(--cy);font-weight:600}
+.spec-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;transform:translateZ(30px)}
+.mini-btn{
+  cursor:pointer;pointer-events:auto;
+  font:600 10.5px 'JetBrains Mono',monospace;letter-spacing:.1em;
+  padding:7px 11px;border-radius:7px;
+  background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(0,216,232,.08));
+  color:#d8f9ff;
+  border:1px solid rgba(255,255,255,.32);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35);
+  transition:all .2s ease;
+  text-transform:uppercase;
+}
+.mini-btn:hover,.mini-btn.act{
+  background:linear-gradient(135deg,rgba(255,255,255,.3),rgba(0,216,232,.35));
+  color:#fff;border-color:#fff;
+  box-shadow:0 0 16px rgba(0,216,232,.38),inset 0 1px 0 rgba(255,255,255,.65);
+}
+
+/* Preloader Overlay (#o0) */
+#o0{
+  inset:0;left:0;bottom:0;max-width:none;display:grid;place-content:center;
+  text-align:center;transform:none;
+  background:radial-gradient(circle at 50% 50%, rgba(3,8,18,.28) 0%, rgba(2,4,8,.86) 100%);
+}
+.pre-card{
+  padding:38px 46px;border-radius:20px;
+  background:linear-gradient(135deg,rgba(255,255,255,.12) 0%,rgba(10,22,46,.32) 100%);
+  backdrop-filter:blur(22px) saturate(190%);
+  -webkit-backdrop-filter:blur(22px) saturate(190%);
+  border-top:1px solid rgba(255,255,255,.45);
+  border-left:1px solid rgba(255,255,255,.28);
+  border-right:1px solid rgba(0,216,232,.3);
+  border-bottom:1px solid rgba(0,216,232,.35);
+  box-shadow:0 28px 80px rgba(0,0,0,.75),inset 0 1.5px 0 rgba(255,255,255,.48);
+  display:flex;flex-direction:column;align-items:center;
+}
+#o0 .n{
+  font:800 clamp(52px,8.5vw,108px)/1 Syne,sans-serif;
+  color:var(--cy);
+  margin:6px 0 12px;
+}
+.pre-bar-wrap{
+  width:min(300px,70vw);height:4px;background:rgba(255,255,255,.12);
+  border-radius:99px;overflow:hidden;margin:0 0 16px;
+}
+.pre-bar{
+  height:100%;width:0%;
+  background:linear-gradient(90deg,var(--co),var(--cy));
+  transition:width .1s linear;
+}
+#o0 .btn{display:none;margin-top:8px}
+
+/* Strata & Alcove Pills */
+.step-pills{display:flex;gap:6px;margin-bottom:12px;pointer-events:auto;transform:translateZ(28px)}
+.step-pill{
+  height:3.5px;flex:1;background:rgba(255,255,255,.18);border-radius:2px;
+  transition:all .3s ease;cursor:pointer;
+}
+.step-pill.on{background:var(--cy);box-shadow:0 0 8px rgba(0,216,232,.65)}
+
+/* Stats Grid */
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;font:11.5px 'JetBrains Mono',monospace;margin-top:12px;transform:translateZ(32px)}
+.stats > div{
+  background:linear-gradient(135deg,rgba(255,255,255,.11),rgba(0,216,232,.05));
+  border:1px solid rgba(255,255,255,.24);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.32);
+  padding:10px 14px;border-radius:10px;
+}
+.stats span{
+  display:block;font:800 22px/1.15 Syne,sans-serif;color:var(--cy);
+  margin-bottom:2px;
+}
+
+/* Portfolio Quick Selector Pills */
+.work-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;pointer-events:auto;transform:translateZ(34px)}
+.work-chip{
+  font:11px 'JetBrains Mono',monospace;padding:7px 12px;border-radius:8px;
+  background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(0,216,232,.06));
+  border:1px solid rgba(255,255,255,.28);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.32);
+  color:var(--ti);cursor:pointer;transition:all .22s ease;
+}
+.work-chip:hover,.work-chip.act{
+  background:linear-gradient(135deg,rgba(255,255,255,.28),rgba(0,216,232,.35));
+  color:#fff;border-color:#fff;
+  transform:translateY(-2px);
+}
+
+/* Contact & Physics Portal (#o5) */
+#o5{left:auto;right:4vw;width:min(410px,90vw)}
+#o5.on{pointer-events:auto}
+#o5 form{transform:translateZ(28px)}
+#o5 input,#o5 select,#o5 textarea{
+  width:100%;margin:0 0 9px;padding:10px 12px;
+  background:rgba(255,255,255,.08);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.26);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22);
+  border-radius:8px;color:var(--ti);font:inherit;
+  transition:border-color .2s,background .2s;
+}
+#o5 select option{background:#061022;color:var(--ti)}
+#o5 input:focus,#o5 select:focus,#o5 textarea:focus{
+  border-color:var(--cy);background:rgba(255,255,255,.13);outline:none;
+}
+.form-toast{
+  display:none;margin-top:10px;padding:10px 12px;border-radius:8px;
+  background:rgba(0,201,150,.18);border:1px solid var(--em);
+  color:var(--em);font:12px 'JetBrains Mono',monospace;
+}
+.form-toast.on{display:block}
+
+/* Case Study Modal (#case) */
+#case{
+  position:fixed;right:4vw;top:16vh;width:min(390px,90vw);
+  z-index:6;display:none;pointer-events:auto;
+}
+#case.on{display:block;animation:caseIn .35s cubic-bezier(.16,1,.3,1)}
+@keyframes caseIn{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+/* HUD Telemetry */
+.hud{
+  position:fixed;right:18px;bottom:14px;
+  font:11px/1.45 'JetBrains Mono',monospace;color:rgba(244,248,252,.78);
+  text-align:right;z-index:5;pointer-events:none;
+  background:linear-gradient(135deg,rgba(255,255,255,.09),rgba(4,8,18,.48));
+  backdrop-filter:blur(16px) saturate(180%);
+  -webkit-backdrop-filter:blur(16px) saturate(180%);
+  padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.22);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.28);
+}
+
+/* Custom Magnetic Cursor */
+#cd,#cr{position:fixed;left:0;top:0;pointer-events:none;z-index:9;border-radius:50%}
+#cd{width:6px;height:6px;background:var(--cy);margin:-3px}
+#cr{
+  width:34px;height:34px;margin:-17px;
+  border:1px solid rgba(0,216,232,.65);
+  transition:width .2s,height .2s,margin .2s,border-color .2s,background .2s;
+}
+@media(hover:none){#cd,#cr{display:none}}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="fx-vignette"></div>
+<div id="sc"></div>
+<div id="cd"></div>
+<div id="cr"></div>
+
+<!-- Top-Center Live 3D Object Inspector Pill -->
+<div class="node-inspector" id="nodeInsp">3D MODULE // HOVER TO INSPECT</div>
+
+<header class="nav" id="topNav">
+  <div class="brand-wrap" data-p="0" title="WEBZO — Web Development &amp; Technical Studio">
+    <b>WEBZO</b>
+  </div>
+  <a data-p="0" class="act">Home</a>
+  <a data-p="1">Core</a>
+  <a data-p="2">Services</a>
+  <a data-p="3">Work</a>
+  <a data-p="4">Network</a>
+  <a data-p="5">Contact</a>
+  <div class="snd-group snd-on" id="sndWrap">
+    <span class="eq-bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+    <button id="snd" type="button">[ Sound: on ]</button>
+    <button id="calmMode" type="button" title="Cycle calming harmonic presets">Zen: 432Hz</button>
+  </div>
+  <span class="t"><i class="pulse-dot"></i>LAT 23.0225° N // LON 72.5714° E // WEBZO.CO.IN</span>
+</header>
+
+<!-- Right-Side Interactive 3D Engineering Telemetry Panel -->
+<aside class="g spec-dock" id="specDock">
+  <div class="kicker" id="sk">LIVE 3D TELEMETRY // WEBZO</div>
+  <h3 id="st" style="font:800 18px Syne,sans-serif;margin:0 0 6px;text-transform:uppercase;color:var(--ti);transform:translateZ(34px)">Spatial Web Engine</h3>
+  <p id="spDesc" style="font-size:12.5px;color:rgba(244,248,252,.82);margin:0 0 10px;transform:translateZ(22px)">Move cursor to tilt the 3D refractive glass cards &amp; swirl the 360-crystal swarm.</p>
+  <div class="spec-list">
+    <div class="spec-item"><span>ARCHITECTURE</span><b id="sv1">NEXT.JS 15 + WEBGL2</b></div>
+    <div class="spec-item"><span>PERFORMANCE</span><b id="sv2">99+ LIGHTHOUSE // 120FPS</b></div>
+    <div class="spec-item"><span>DELIVERY</span><b id="sv3">GLOBAL EDGE CDN</b></div>
+  </div>
+  <div class="spec-actions">
+    <button type="button" class="mini-btn" id="btnExplode">EXPAND 3D CORE</button>
+    <button type="button" class="mini-btn" id="btnWire">CAD WIREFRAME</button>
+    <button type="button" class="mini-btn" id="btnPulse">PULSE CORRIDOR</button>
+  </div>
+</aside>
+
+<!-- 0: Preloader -->
+<section class="ov on" id="o0">
+  <div class="pre-card">
+    <div class="kicker">WEB DEVELOPMENT &amp; TECHNICAL ENGINEERING // WEBZO.CO.IN</div>
+    <div class="n" id="pc">0%</div>
+    <div class="pre-bar-wrap"><div class="pre-bar" id="pbar"></div></div>
+    <p style="margin-bottom:14px">Assembling the WEBZO 3D neural swarm &amp; calming soundscape</p>
+    <button class="btn mag" id="enter">[ INITIALIZE WEBZO.CO.IN // ENTER EXPERIENCE ]</button>
+  </div>
+</section>
+
+<!-- 1: Hero -->
+<section class="ov" id="o1">
+  <div class="g">
+    <div class="kicker">FULL-STACK WEB DEVELOPMENT &amp; 3D DIGITAL AGENCY</div>
+    <h1>Architecting the next dimension of the web</h1>
+    <p>WEBZO designs and engineers custom business websites, interactive 3D WebGL experiences, scalable SaaS applications, and AI-powered digital platforms.</p>
+    <div class="feat-grid">
+      <button type="button" class="feat-pill" data-p="2"><i></i>Custom Business Websites</button>
+      <button type="button" class="feat-pill" data-p="2"><i></i>3D WebGL &amp; Interactive UI</button>
+      <button type="button" class="feat-pill" data-p="1"><i></i>Full-Stack SaaS &amp; Web Apps</button>
+      <button type="button" class="feat-pill" data-p="4"><i></i>E-Commerce &amp; AI Cloud</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn mag" data-p="1">EXPLORE CORE ARCHITECTURE</button>
+      <button class="btn btn-sec mag" data-p="5">LAUNCH PROJECT PORTAL</button>
+    </div>
+  </div>
+</section>
+
+<!-- 2: Core Technical Stack Strata -->
+<section class="ov" id="o2">
+  <div class="g">
+    <div class="kicker" id="bk">TECHNICAL STACK 01 // 04</div>
+    <div class="step-pills" id="bPills"><span class="step-pill on"></span><span class="step-pill"></span><span class="step-pill"></span><span class="step-pill"></span></div>
+    <h2 id="bt"></h2>
+    <p id="bp"></p>
+    <div class="feat-grid" id="stackBtns">
+      <button type="button" class="feat-pill act" data-bi="0"><i></i>01 Frontend &amp; 3D WebGL</button>
+      <button type="button" class="feat-pill" data-bi="1"><i></i>02 Full-Stack &amp; APIs</button>
+      <button type="button" class="feat-pill" data-bi="2"><i></i>03 E-Commerce &amp; CMS</button>
+      <button type="button" class="feat-pill" data-bi="3"><i></i>04 AI &amp; Cloud DevOps</button>
+    </div>
+  </div>
+</section>
+
+<!-- 3: Web & Technical Services Alcoves -->
+<section class="ov" id="o3">
+  <div class="g">
+    <div class="kicker" id="ak">SERVICE PILLAR 01 // 04</div>
+    <div class="step-pills" id="aPills"><span class="step-pill on"></span><span class="step-pill"></span><span class="step-pill"></span><span class="step-pill"></span></div>
+    <h2 id="at"></h2>
+    <p id="ap"></p>
+    <div class="feat-grid" id="alcBtns">
+      <button type="button" class="feat-pill act" data-ai="0"><i></i>Custom 3D Websites</button>
+      <button type="button" class="feat-pill" data-ai="1"><i></i>SaaS &amp; AI Web Apps</button>
+      <button type="button" class="feat-pill" data-ai="2"><i></i>E-Commerce Stores</button>
+      <button type="button" class="feat-pill" data-ai="3"><i></i>Cloud, SEO &amp; Support</button>
+    </div>
+  </div>
+</section>
+
+<!-- 4: Portfolio Work -->
+<section class="ov" id="o4">
+  <div class="g">
+    <div class="kicker">CLIENT PLATFORMS &amp; WEB BUILDS</div>
+    <h2>Selected work</h2>
+    <p style="margin-bottom:10px">Five production websites &amp; software platforms engineered by WEBZO. Hover any 3D screen in the orbital gallery or click below to inspect metrics.</p>
+    <div class="work-chips" id="wChips">
+      <button type="button" class="work-chip" data-ci="0">01 AETHER-AI</button>
+      <button type="button" class="work-chip" data-ci="1">02 KRONOS</button>
+      <button type="button" class="work-chip" data-ci="2">03 VORTEX</button>
+      <button type="button" class="work-chip" data-ci="3">04 NEXUS</button>
+      <button type="button" class="work-chip" data-ci="4">05 HYPERION</button>
+    </div>
+  </div>
+</section>
+
+<!-- 5: Global Delivery & Hosting Network -->
+<section class="ov" id="o5g">
+  <div class="g">
+    <div class="kicker">GLOBAL CDN &amp; CLOUD DEPLOYMENT</div>
+    <h2>Global infrastructure</h2>
+    <p>Drag the 3D orbital globe. Every website and web application we build at WEBZO HQ in India deploys across global edge nodes for instant page loads worldwide.</p>
+    <div class="stats">
+      <div><span>99.998%</span>uptime</div>
+      <div><span>&lt;14ms</span>edge latency</div>
+      <div><span>100</span>Lighthouse target</div>
+      <div><span>24/7</span>tech support</div>
+    </div>
+  </div>
+</section>
+
+<!-- 6: Contact & Physics Sandbox -->
+<section class="ov" id="o5">
+  <div class="g">
+    <div class="kicker">GET A WEBSITE OR CUSTOM BUILD QUOTE</div>
+    <h2>Start a project</h2>
+    <form id="f">
+      <input placeholder="Your Name / Company" required aria-label="Name">
+      <input type="email" placeholder="Work Email" required aria-label="Email">
+      <select aria-label="Project Type">
+        <option>Custom Business Website &amp; UI/UX</option>
+        <option>3D Interactive Website (WebGL)</option>
+        <option>Full-Stack Web App &amp; SaaS Platform</option>
+        <option>E-Commerce Store &amp; Custom CMS</option>
+        <option>AI Automation &amp; Technical Consulting</option>
+      </select>
+      <textarea rows="3" placeholder="Tell us about your website goals, features &amp; timeline..." aria-label="Message"></textarea>
+      <button class="btn mag" type="submit">TRANSMIT BRIEF</button>
+      <button class="btn btn-sec mag" type="button" id="sw">SHOCKWAVE</button>
+      <button class="btn btn-sec mag" type="button" id="gi">GRAVITY INVERT</button>
+    </form>
+    <div class="form-toast" id="fToast">BRIEF RECEIVED // WEBZO ENGINEERING TEAM WILL REPLY SHORTLY.</div>
+    <p style="font-size:12px;margin:10px 0 0;opacity:.75">Move the cursor over the floor to knock tech blocks. WASD pilots the energy sphere.</p>
+  </div>
+</section>
+
+<!-- Case Study Detail Drawer -->
+<aside class="g" id="case">
+  <div class="kicker" id="ck">PROJECT CASE STUDY // LIVE METRICS</div>
+  <h2 id="ct" style="font:800 24px Syne;margin:0 0 10px"></h2>
+  <p id="cp" style="margin-bottom:18px"></p>
+  <button class="btn" id="cx" type="button">CLOSE</button>
+</aside>
+
+<div class="hud" id="hud"></div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
+    "cannon-es": "https://cdn.jsdelivr.net/npm/cannon-es@0.20.0/dist/cannon-es.js"
+  }
+}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import * as CANNON from 'cannon-es';
+
+const $ = s => document.querySelector(s),
+      $$ = s => document.querySelectorAll(s),
+      W = () => innerWidth,
+      H = () => innerHeight,
+      V3 = (...a) => new THREE.Vector3(...a),
+      lp = (a, b, k) => a + (b - a) * k,
+      cl = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+
+/* ==========================================================================
+   CALMING GENERATIVE AMBIENT SOUND ENGINE (Web Audio API)
+   ========================================================================== */
+const CALM_MODES = [
+  { name: 'Zen: 432Hz', chords: [108, 162, 216, 270, 324], scale: [432, 486, 540, 648, 729, 864] },
+  { name: 'Aurora: 528Hz', chords: [132, 198, 264, 330, 396], scale: [528, 594, 660, 792, 880, 1056] },
+  { name: 'Deep Space', chords: [96, 144, 192, 240, 288], scale: [384, 432, 480, 576, 648, 768] }
+];
+
+class WebzoSoundEngine {
+  constructor() {
+    this.on = true;
+    this.modeIdx = 0;
+  }
+  init() {
+    if (this.ctx) {
+      if (this.ctx.state === 'suspended') this.ctx.resume();
+      return;
+    }
+    const c = this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    this.m = c.createGain();
+    this.m.gain.value = this.on ? 0.42 : 0;
+
+    this.delL = c.createDelay(2.0);
+    this.delR = c.createDelay(2.0);
+    this.delL.delayTime.value = 0.38;
+    this.delR.delayTime.value = 0.53;
+    const fbL = c.createGain(), fbR = c.createGain();
+    fbL.gain.value = 0.35;
+    fbR.gain.value = 0.35;
+    const damp = c.createBiquadFilter();
+    damp.type = 'lowpass';
+    damp.frequency.value = 1500;
+
+    this.delL.connect(damp);
+    damp.connect(fbL);
+    fbL.connect(this.delR);
+    this.delR.connect(fbR);
+    fbR.connect(this.delL);
+
+    const wet = c.createGain();
+    wet.gain.value = 0.34;
+    this.delL.connect(wet);
+    this.delR.connect(wet);
+    wet.connect(this.m);
+    this.m.connect(c.destination);
+
+    this.f = c.createBiquadFilter();
+    this.f.type = 'lowpass';
+    this.f.frequency.value = 240;
+    this.f.Q.value = 0.65;
+
+    this.lfo = c.createOscillator();
+    this.lfo.type = 'sine';
+    this.lfo.frequency.value = 0.11;
+    const lfoGain = c.createGain();
+    lfoGain.gain.value = 65;
+    this.lfo.connect(lfoGain);
+    lfoGain.connect(this.f.frequency);
+    this.lfo.start();
+
+    const padGain = c.createGain();
+    padGain.gain.value = 0.085;
+    const preset = CALM_MODES[this.modeIdx];
+    this.o = preset.chords.map((fr, i) => {
+      const o = c.createOscillator();
+      const g = c.createGain();
+      const pan = c.createStereoPanner ? c.createStereoPanner() : null;
+      o.type = i % 2 === 0 ? 'sine' : 'triangle';
+      o.frequency.value = fr + (i % 2 === 0 ? 0.35 : -0.35);
+      g.gain.value = i < 2 ? 0.3 : 0.13 / (i * 0.6);
+      o.connect(g);
+      if (pan) {
+        pan.pan.value = ((i / 4) - 0.5) * 0.65;
+        g.connect(pan);
+        pan.connect(this.f);
+      } else {
+        g.connect(this.f);
+      }
+      o.start();
+      return o;
+    });
+
+    const bufSize = c.sampleRate * 2;
+    const noiseBuf = c.createBuffer(1, bufSize, c.sampleRate);
+    const out = noiseBuf.getChannelData(0);
+    let b0 = 0, b1 = 0, b2 = 0;
+    for (let i = 0; i < bufSize; i++) {
+      const w = Math.random() * 2 - 1;
+      b0 = 0.997 * b0 + w * 0.029;
+      b1 = 0.985 * b1 + w * 0.032;
+      b2 = 0.950 * b2 + w * 0.048;
+      out[i] = (b0 + b1 + b2) * 0.1;
+    }
+    const noise = c.createBufferSource();
+    noise.buffer = noiseBuf;
+    noise.loop = true;
+    this.airFilter = c.createBiquadFilter();
+    this.airFilter.type = 'bandpass';
+    this.airFilter.frequency.value = 300;
+    this.airFilter.Q.value = 1.2;
+    const airGain = c.createGain();
+    airGain.gain.value = 0.022;
+    noise.connect(this.airFilter);
+    this.airFilter.connect(airGain);
+    airGain.connect(this.m);
+    noise.start();
+
+    this.f.connect(padGain);
+    padGain.connect(this.m);
+    padGain.connect(this.delL);
+
+    this.chimeTimer = setInterval(() => {
+      if (this.on && this.ctx && this.ctx.state === 'running' && Math.random() < 0.42) {
+        const sc = CALM_MODES[this.modeIdx].scale;
+        const f = sc[Math.floor(Math.random() * sc.length)] * (Math.random() < 0.35 ? 0.5 : 1);
+        this.tone(f, 3.2, 'sine', 0.015);
+      }
+    }, 3600);
+  }
+  cycleMode() {
+    this.init();
+    this.modeIdx = (this.modeIdx + 1) % CALM_MODES.length;
+    const preset = CALM_MODES[this.modeIdx];
+    if (this.ctx && this.o) {
+      const T = this.ctx.currentTime;
+      this.o.forEach((osc, i) => {
+        osc.frequency.setTargetAtTime(preset.chords[i] + (i % 2 === 0 ? 0.35 : -0.35), T, 0.8);
+      });
+    }
+    this.chime();
+    return preset.name;
+  }
+  set(on) {
+    this.on = on;
+    if (this.m && this.ctx) {
+      this.m.gain.setTargetAtTime(on ? 0.42 : 0, this.ctx.currentTime, 0.25);
+    }
+    $('#sndWrap').classList.toggle('snd-on', on);
+  }
+  mod(v, mm) {
+    if (!this.ctx) return;
+    const T = this.ctx.currentTime;
+    const targetFreq = 230 + Math.min(Math.abs(v) * 550, 280) + Math.min(mm * 80, 120);
+    this.f.frequency.setTargetAtTime(targetFreq, T, 0.45);
+    if (this.airFilter) {
+      this.airFilter.frequency.setTargetAtTime(260 + Math.min(Math.abs(v) * 350 + mm * 70, 320), T, 0.5);
+    }
+  }
+  tone(f, d, ty = 'sine', vol = 0.025) {
+    const c = this.ctx;
+    if (!c || !this.on) return;
+    const now = c.currentTime;
+    const o = c.createOscillator(), g = c.createGain();
+    o.type = ty;
+    o.frequency.setValueAtTime(f, now);
+    g.gain.setValueAtTime(0.0001, now);
+    g.gain.linearRampToValueAtTime(vol, now + 0.045);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + d);
+    o.connect(g);
+    g.connect(this.m);
+    if (this.delL) g.connect(this.delL);
+    o.start(now);
+    o.stop(now + d + 0.05);
+  }
+  chime() {
+    const sc = CALM_MODES[this.modeIdx].scale;
+    [sc[0], sc[2], sc[4]].forEach((f, i) =>
+      setTimeout(() => this.tone(f, 1.9, 'sine', 0.022), i * 110)
+    );
+  }
+  click(v) {
+    const sc = CALM_MODES[this.modeIdx].scale;
+    const note = sc[Math.floor(Math.random() * sc.length)] * 0.5;
+    this.tone(note, 0.45, 'sine', Math.min(0.04 * v + 0.007, 0.045));
+  }
+}
+const snd = new WebzoSoundEngine();
+
+/* ==========================================================================
+   THREE.JS RENDERER & CINEMATIC POST-PROCESSING
+   ========================================================================== */
+const R = new THREE.WebGLRenderer({ canvas: $('#c'), powerPreference: 'high-performance', antialias: true });
+R.setPixelRatio(Math.min(devicePixelRatio, 1.8));
+R.setSize(W(), H());
+R.toneMapping = THREE.ACESFilmicToneMapping;
+R.toneMappingExposure = 0.9;
+
+const S = new THREE.Scene(),
+      VOID = new THREE.Color(0x020408),
+      bg = VOID.clone();
+S.background = bg;
+S.fog = new THREE.FogExp2(0x020408, 0.0108);
+S.environment = new THREE.PMREMGenerator(R).fromScene(new RoomEnvironment(), 0.04).texture;
+
+const cam = new THREE.PerspectiveCamera(50, W() / H(), 0.1, 420);
+S.add(cam);
+const pl = new THREE.PointLight(0x00d8e8, 34, 54);
+cam.add(pl);
+const dl = new THREE.DirectionalLight(0x7b2cbf, 1.45);
+dl.position.set(-6, 10, 6);
+S.add(dl);
+const dl2 = new THREE.DirectionalLight(0x0051ff, 1.15);
+dl2.position.set(8, -6, -12);
+S.add(dl2);
+
+const comp = new EffectComposer(R);
+comp.addPass(new RenderPass(S, cam));
+const bloom = new UnrealBloomPass(new THREE.Vector2(W(), H()), 0.45, 0.52, 0.55);
+comp.addPass(bloom);
+
+const fin = new ShaderPass({
+  uniforms: { tDiffuse: { value: null }, uAmt: { value: 0.0014 }, uT: { value: 0 } },
+  vertexShader: 'varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,0.,1.);}',
+  fragmentShader: `
+    uniform sampler2D tDiffuse;
+    uniform float uAmt, uT;
+    varying vec2 vUv;
+    void main(){
+      vec2 centered = vUv - 0.5;
+      vec2 d = centered * uAmt * (1.0 + dot(centered, centered) * 1.2);
+      vec4 c = vec4(
+        texture2D(tDiffuse, vUv + d).r,
+        texture2D(tDiffuse, vUv).g,
+        texture2D(tDiffuse, vUv - d).b,
+        1.0
+      );
+      c.rgb = c.rgb / (1.0 + c.rgb * 0.2);
+      float vig = smoothstep(0.98, 0.22, length(centered));
+      c.rgb *= mix(0.72, 1.0, vig);
+      c.rgb += (fract(sin(dot(vUv * 1000.0 + uT, vec2(12.9898,78.233))) * 43758.5453) - 0.5) * 0.018;
+      gl_FragColor = c;
+    }`
+});
+comp.addPass(fin);
+comp.addPass(new OutputPass());
+
+const U = { uT: { value: 0 }, uPulse: { value: 0 }, uMouse3D: { value: V3(0, 2, 0) } };
+
+/* ==========================================================================
+   1. QUANTUM VORTEX PARTICLES & VOLUMETRIC AURORA SILK RIBBONS
+   ========================================================================== */
+const N = 28000,
+      pa = new Float32Array(N * 3),
+      pe = new Float32Array(N * 3),
+      ps = new Float32Array(N),
+      ico = new THREE.IcosahedronGeometry(3.2, 1).toNonIndexed().attributes.position;
+
+for (let i = 0; i < N; i++) {
+  pa[i * 3] = (Math.random() - 0.5) * 92;
+  pa[i * 3 + 1] = (Math.random() - 0.5) * 62;
+  pa[i * 3 + 2] = Math.random() * -192 + 25;
+  const f = (Math.random() * ico.count / 3 | 0) * 3,
+        a = f + (Math.random() * 3 | 0),
+        b = f + ((a - f + 1) % 3),
+        u = Math.random();
+  pe[i * 3] = lp(ico.getX(a), ico.getX(b), u);
+  pe[i * 3 + 1] = lp(ico.getY(a), ico.getY(b), u);
+  pe[i * 3 + 2] = lp(ico.getZ(a), ico.getZ(b), u);
+  ps[i] = Math.random();
+}
+const pg = new THREE.BufferGeometry();
+pg.setAttribute('position', new THREE.BufferAttribute(pa, 3));
+pg.setAttribute('aEnd', new THREE.BufferAttribute(pe, 3));
+pg.setAttribute('aS', new THREE.BufferAttribute(ps, 1));
+
+const pu = {
+  uA: { value: 0 },
+  uT: U.uT,
+  uMV: { value: 0 },
+  uPx: { value: H() * R.getPixelRatio() * 0.95 },
+  uDim: { value: 0.72 }
+};
+
+const pts = new THREE.Points(pg, new THREE.ShaderMaterial({
+  uniforms: pu,
+  transparent: true,
+  depthWrite: false,
+  blending: THREE.AdditiveBlending,
+  vertexShader: `
+    uniform float uA, uT, uMV, uPx;
+    attribute vec3 aEnd;
+    attribute float aS;
+    varying float vH;
+    void main(){
+      vec3 p = mix(position, aEnd, smoothstep(0.0, 1.0, uA));
+      float ph = aS * 6.283 + uT * (0.35 + uMV * 1.5);
+      p += vec3(sin(ph + p.y), cos(ph * 1.3 + p.z), sin(ph * 0.7 + p.x)) * (0.45 + (1.0 - uA) * 0.55 + uMV * 1.5) * 0.4;
+      float a = (1.0 - uA) * 4.0;
+      p.xz = mat2(cos(a), -sin(a), sin(a), cos(a)) * p.xz;
+      vH = aS;
+      vec4 mv = modelViewMatrix * vec4(p, 1.0);
+      gl_PointSize = uPx * (0.024 + aS * 0.042) / -mv.z;
+      gl_Position = projectionMatrix * mv;
+    }`,
+  fragmentShader: `
+    uniform float uMV, uDim;
+    varying float vH;
+    void main(){
+      float d = length(gl_PointCoord - 0.5);
+      if(d > 0.5) discard;
+      vec3 c1 = vec3(0.0, 0.28, 0.85);
+      vec3 c2 = vec3(0.0, 0.78, 0.92);
+      vec3 c3 = vec3(0.45, 0.16, 0.78);
+      vec3 c = mix(mix(c1, c3, sin(vH * 6.28) * 0.5 + 0.5), c2, clamp(uMV + vH * 0.35, 0.0, 1.0));
+      gl_FragColor = vec4(c * uDim, pow(smoothstep(0.5, 0.0, d), 1.6) * 0.75);
+    }`
+}));
+pts.frustumCulled = false;
+S.add(pts);
+
+/* Ground Horizon Grid ONLY */
+const gridMat = new THREE.ShaderMaterial({
+  uniforms: U,
+  transparent: true,
+  depthWrite: false,
+  vertexShader: 'varying vec3 vW;void main(){vec4 w=modelMatrix*vec4(position,1.);vW=w.xyz;gl_Position=projectionMatrix*viewMatrix*w;}',
+  fragmentShader: `
+    uniform float uT, uPulse;
+    uniform vec3 uMouse3D;
+    varying vec3 vW;
+    void main(){
+      vec2 q = vW.xz * 0.5;
+      vec2 g = abs(fract(q - 0.5) - 0.5) / fwidth(q);
+      float l = 1.0 - min(min(g.x, g.y), 1.0);
+      float r = smoothstep(0.14, 0.0, abs(fract(length(vW.xz - vec2(0.0, vW.z < -100.0 ? -168.0 : 0.0)) * 0.11 - uT * 0.14) - 0.5) - 0.36);
+      float mDist = length(vW.xz - uMouse3D.xz);
+      float mGlow = exp(-mDist * 0.28) * 0.55;
+      float fd = exp(-length(vW.xz - cameraPosition.xz) * 0.048);
+      vec3 col = mix(vec3(0.0, 0.38, 0.78), vec3(0.0, 0.82, 0.95), r + mGlow) * (l * 0.52 + r * (0.28 + uPulse * 0.35) + mGlow);
+      gl_FragColor = vec4(col, (l * 0.45 + r * 0.2 + mGlow * 0.4) * fd + 0.01);
+    }`
+});
+const floor = (z, s) => {
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(s, s), gridMat);
+  m.rotation.x = -Math.PI / 2;
+  m.position.set(0, 0, z);
+  S.add(m);
+  return m;
+};
+[0, -45, -90, -135, -168].forEach(z => floor(z, 68));
+
+/* Volumetric Iridescent Aurora Silk Ribbons */
+const auroraMat = new THREE.ShaderMaterial({
+  uniforms: U,
+  side: THREE.DoubleSide,
+  transparent: true,
+  depthWrite: false,
+  blending: THREE.AdditiveBlending,
+  vertexShader: `
+    uniform float uT;
+    varying vec2 vUv;
+    varying float vWave;
+    void main(){
+      vUv = uv;
+      vec3 p = position;
+      float w1 = sin(p.z * 0.06 + uT * 0.7 + p.x * 0.2) * 1.4;
+      float w2 = cos(p.z * 0.11 - uT * 0.5) * 0.8;
+      p.y += w1 + w2;
+      p.x += sin(p.z * 0.04 + uT * 0.4) * 1.8;
+      vWave = (w1 + w2) * 0.4;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
+    }`,
+  fragmentShader: `
+    uniform float uT, uPulse;
+    varying vec2 vUv;
+    varying float vWave;
+    void main(){
+      float edge = sin(vUv.y * 3.14159);
+      edge = pow(edge, 2.2);
+      float streak = sin(vUv.x * 40.0 - uT * 2.2) * 0.5 + 0.5;
+      vec3 c1 = vec3(0.0, 0.72, 0.92);
+      vec3 c2 = vec3(0.48, 0.16, 0.85);
+      vec3 c3 = vec3(0.0, 0.32, 0.95);
+      vec3 col = mix(c1, c2, sin(vUv.x * 6.28 + uT * 0.3) * 0.5 + 0.5);
+      col = mix(col, c3, vWave * 0.5 + 0.5);
+      float alpha = edge * (0.09 + streak * 0.08 + uPulse * 0.12) * smoothstep(0.0, 0.08, vUv.x) * smoothstep(1.0, 0.92, vUv.x);
+      gl_FragColor = vec4(col, alpha);
+    }`
+});
+
+[-9.5, 9.5].forEach((xOff, idx) => {
+  const ribbonGeo = new THREE.PlaneGeometry(195, 3.2, 180, 12);
+  ribbonGeo.rotateY(Math.PI / 2);
+  const rib = new THREE.Mesh(ribbonGeo, auroraMat);
+  rib.position.set(xOff, 4.2 + idx * 1.2, -82);
+  rib.rotation.z = idx ? -0.35 : 0.35;
+  S.add(rib);
+});
+
+/* ==========================================================================
+   GPU INSTANCED MORPHING CYBER-CRYSTAL SWARM (360 Real-Time 3D Instances)
+   ========================================================================== */
+const SWARM_N = 360;
+const swarmGeo = new THREE.OctahedronGeometry(0.16, 0);
+const swarmMat = new THREE.MeshStandardMaterial({
+  color: 0x00d8e8,
+  emissive: 0x004466,
+  emissiveIntensity: 0.4,
+  metalness: 0.92,
+  roughness: 0.15
+});
+const swarmMesh = new THREE.InstancedMesh(swarmGeo, swarmMat, SWARM_N);
+swarmMesh.frustumCulled = false;
+S.add(swarmMesh);
+
+const swarmData = [...Array(SWARM_N)].map((_, i) => ({
+  pos: V3((Math.random() - 0.5) * 20, Math.random() * 8, -Math.random() * 160),
+  vel: V3(),
+  col: new THREE.Color().setHSL(0.52 + (i % 40) * 0.006, 0.85, 0.55)
+}));
+swarmData.forEach((d, i) => swarmMesh.setColorAt(i, d.col));
+swarmMesh.instanceColor.needsUpdate = true;
+const dummy = new THREE.Object3D();
+
+/* ==========================================================================
+   INTERACTIVE 3D FLOATING TECH ASSEMBLIES
+   ========================================================================== */
+const interactiveNodes = [];
+const NODE_LABELS = [
+  'REACT 19 + NEXT.JS EDGE COMPILER',
+  'WEBGPU & GLSL SHADER PIPELINE',
+  'THREE.JS SPATIAL SCENE GRAPH',
+  'TYPESCRIPT GRAPHQL MICRO-CORE',
+  'AI MULTI-AGENT VECTOR ROUTER',
+  'HEADLESS E-COMMERCE ENGINE',
+  'TAILWIND & MOTION UI SYSTEM',
+  'REAL-TIME WEBSOCKET SYNC',
+  'KUBERNETES ZERO-DOWNTIME MESH',
+  'LIGHTHOUSE 100 SEO OPTIMIZER',
+  '3D PRODUCT CONFIGURATOR CORE',
+  'POSTGRES & REDIS EDGE CACHE'
+];
+
+const nodeCoreMat = new THREE.MeshStandardMaterial({
+  color: 0x091932,
+  emissive: 0x006888,
+  emissiveIntensity: 0.38,
+  metalness: 0.9,
+  roughness: 0.18
+});
+const nodeWireMat = new THREE.MeshBasicMaterial({ color: 0x00d8e8, wireframe: true, transparent: true, opacity: 0.42 });
+const nodeRingMat = new THREE.MeshBasicMaterial({ color: 0x7b2cbf, side: THREE.DoubleSide, transparent: true, opacity: 0.48 });
+
+for (let i = 0; i < 20; i++) {
+  const g = new THREE.Group();
+  const side = i % 2 === 0 ? -1 : 1;
+  const zPos = 2 - i * 8.4;
+  const xPos = side * (5.6 + (i % 3) * 1.4);
+  const yPos = 1.5 + (i % 4) * 1.15;
+  g.position.set(xPos, yPos, zPos);
+
+  const geoType = i % 3;
+  const polyGeo = geoType === 0
+    ? new THREE.OctahedronGeometry(0.56, 0)
+    : geoType === 1
+      ? new THREE.IcosahedronGeometry(0.54, 0)
+      : new THREE.TorusKnotGeometry(0.35, 0.08, 64, 10);
+
+  const coreMesh = new THREE.Mesh(polyGeo, nodeCoreMat.clone());
+  const wireMesh = new THREE.Mesh(polyGeo, nodeWireMat.clone());
+  wireMesh.scale.setScalar(1.16);
+
+  const gRing = new THREE.Mesh(new THREE.TorusGeometry(0.86, 0.016, 10, 48), nodeRingMat.clone());
+  gRing.rotation.x = Math.PI / 3;
+  const gRing2 = new THREE.Mesh(new THREE.TorusGeometry(1.06, 0.012, 8, 48), nodeWireMat.clone());
+  gRing2.rotation.y = Math.PI / 4;
+
+  const moon = new THREE.Mesh(new THREE.OctahedronGeometry(0.11, 0), new THREE.MeshBasicMaterial({ color: 0x00d8e8 }));
+  moon.position.set(1.06, 0, 0);
+  gRing2.add(moon);
+
+  const basePed = new THREE.Mesh(
+    new THREE.RingGeometry(0.45, 0.52, 24),
+    new THREE.MeshBasicMaterial({ color: 0x00b8d4, side: THREE.DoubleSide, transparent: true, opacity: 0.25 })
+  );
+  basePed.rotation.x = -Math.PI / 2;
+  basePed.position.y = -yPos + 0.02;
+
+  g.add(coreMesh, wireMesh, gRing, gRing2, basePed);
+  coreMesh.userData = {
+    isNode: true,
+    group: g,
+    wire: wireMesh,
+    r1: gRing,
+    r2: gRing2,
+    label: NODE_LABELS[i % NODE_LABELS.length],
+    spinBoost: 0,
+    baseY: yPos,
+    phase: i * 0.7
+  };
+  S.add(g);
+  interactiveNodes.push(coreMesh);
+}
+
+/* ==========================================================================
+   2. HERO ARCHITECTURAL MONOLITH & QUANTUM ACCRETION CORE
+   ========================================================================== */
+const mono = new THREE.Group();
+mono.position.y = 2.6;
+S.add(mono);
+
+const dm = new THREE.ShaderMaterial({
+  side: THREE.DoubleSide,
+  uniforms: { uHit: { value: V3(0, -9, 0) }, uR: { value: 0 }, uT: U.uT },
+  vertexShader: 'varying vec3 vW,vN;void main(){vec4 w=modelMatrix*vec4(position,1.);vW=w.xyz;vN=normalize(mat3(modelMatrix)*normal);gl_Position=projectionMatrix*viewMatrix*w;}',
+  fragmentShader: `
+    uniform vec3 uHit;
+    uniform float uR, uT;
+    varying vec3 vW, vN;
+    float h(vec3 p){return fract(sin(dot(p,vec3(12.99,78.23,37.72)))*43758.5);}
+    float n(vec3 p){
+      vec3 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
+      return mix(mix(mix(h(i),h(i+vec3(1,0,0)),f.x),mix(h(i+vec3(0,1,0)),h(i+vec3(1,1,0)),f.x),f.y),
+                 mix(mix(h(i+vec3(0,0,1)),h(i+vec3(1,0,1)),f.x),mix(h(i+vec3(0,1,1)),h(i+vec3(1,1,1)),f.x),f.y),f.z);
+    }
+    void main(){
+      float m = uR - distance(vW, uHit) + (n(vW * 3.0 + uT * 0.15) - 0.5) * 0.9;
+      if(m > 0.0) discard;
+      vec3 V = normalize(cameraPosition - vW);
+      float fr = pow(1.0 - abs(dot(normalize(vN), V)), 2.8);
+      float e = smoothstep(0.3, 0.0, -m);
+      vec3 base = vec3(0.012, 0.022, 0.042) + fr * vec3(0.0, 0.48, 0.9) * 0.52;
+      gl_FragColor = vec4(base + e * vec3(0.0, 0.8, 0.95) * 1.2, 1.0);
+    }`
+});
+const outer = new THREE.Mesh(new THREE.BoxGeometry(2.2, 4.6, 2.2), dm);
+mono.add(outer);
+
+const cy = new THREE.MeshBasicMaterial({ color: 0x00b8d4, wireframe: true, transparent: true, opacity: 0.3 });
+const monoWire = new THREE.Mesh(new THREE.BoxGeometry(2.14, 4.52, 2.14, 5, 10, 5), cy);
+mono.add(monoWire);
+
+const core = new THREE.Group();
+core.add(
+  new THREE.Mesh(new THREE.IcosahedronGeometry(0.92, 1), new THREE.MeshBasicMaterial({ color: 0x0051ff, wireframe: true, transparent: true, opacity: 0.78 })),
+  new THREE.Mesh(new THREE.TorusKnotGeometry(0.5, 0.068, 120, 14, 2, 3), new THREE.MeshStandardMaterial({ color: 0x00d8e8, emissive: 0x006080, emissiveIntensity: 0.45, metalness: 0.85, roughness: 0.2 }))
+);
+mono.add(core);
+
+const gyroRings = [];
+[
+  { r: 2.65, tube: 0.018, col: 0x00b8d4, sx: 0.38, sy: 0.62 },
+  { r: 3.15, tube: 0.015, col: 0x7b2cbf, sx: -0.45, sy: 0.3 },
+  { r: 3.65, tube: 0.012, col: 0x0051ff, sx: 0.25, sy: -0.52 }
+].forEach(cfg => {
+  const rMesh = new THREE.Mesh(
+    new THREE.TorusGeometry(cfg.r, cfg.tube, 12, 96),
+    new THREE.MeshBasicMaterial({ color: cfg.col, transparent: true, opacity: 0.42 })
+  );
+  rMesh.userData = cfg;
+  mono.add(rMesh);
+  gyroRings.push(rMesh);
+});
+
+const shards = [];
+for (let i = 0; i < 14; i++) {
+  const s = new THREE.Mesh(
+    new THREE.OctahedronGeometry(0.18),
+    new THREE.MeshStandardMaterial({ color: 0xd8ecff, emissive: 0x004466, emissiveIntensity: 0.3, metalness: 0.9, roughness: 0.22 })
+  );
+  s.userData = { a: (i / 14) * 6.283, r: 2.35 + (i % 3) * 0.5, y: ((i % 4) - 1.5) * 0.82 };
+  mono.add(s);
+  shards.push(s);
+}
+
+/* ==========================================================================
+   3. STRATA ARCHITECTURE LAYERS (With Animated Circuit Shader Traces)
+   ========================================================================== */
+const SZ = -30, strata = [];
+const circuitSlabMat = new THREE.ShaderMaterial({
+  uniforms: U,
+  transparent: true,
+  vertexShader: 'varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
+  fragmentShader: `
+    uniform float uT;
+    varying vec2 vUv;
+    void main(){
+      vec2 g = abs(fract(vUv * 12.0 - 0.5) - 0.5) / fwidth(vUv * 12.0);
+      float line = 1.0 - min(min(g.x, g.y), 1.0);
+      float pulse = smoothstep(0.15, 0.0, abs(fract(length(vUv - 0.5) * 3.0 - uT * 0.4) - 0.5) - 0.35);
+      vec3 col = vec3(0.02, 0.05, 0.11) + vec3(0.0, 0.68, 0.88) * (line * 0.35 + pulse * 0.45);
+      gl_FragColor = vec4(col, 0.9);
+    }`
+});
+
+[0x00c8dc, 0x0051ff, 0x7b2cbf, 0x00b894].forEach((c, idx) => {
+  const g = new THREE.Group(),
+        b = new THREE.BoxGeometry(5.4, 0.32, 5.4);
+  g.add(
+    new THREE.Mesh(b, circuitSlabMat),
+    new THREE.LineSegments(new THREE.EdgesGeometry(b), new THREE.LineBasicMaterial({ color: c, transparent: true, opacity: 0.82 }))
+  );
+  const r = new THREE.Mesh(new THREE.TorusGeometry(1.45, 0.028, 10, 64), new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: 0.75 }));
+  r.rotation.x = Math.PI / 2;
+  g.add(r);
+  [[-2.4, -2.4], [2.4, -2.4], [-2.4, 2.4], [2.4, 2.4]].forEach(([px, pz]) => {
+    const pil = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.65, 0.18), new THREE.MeshBasicMaterial({ color: c, wireframe: true }));
+    pil.position.set(px, 0.25, pz);
+    g.add(pil);
+  });
+  g.position.z = SZ;
+  g.userData = { idx };
+  S.add(g);
+  strata.push(g);
+});
+
+const BEATS = [
+  ['Frontend & 3D WebGL engineering', 'Custom React, Next.js, Three.js and WebGPU interfaces engineered for 120 FPS motion, responsive precision, and high conversion.'],
+  ['Full-stack web apps & custom APIs', 'Scalable TypeScript, Node.js, Python and GraphQL backends with real-time database sync and clean modular architecture.'],
+  ['E-commerce & headless CMS platforms', 'High-speed online stores, interactive product configurators, and custom content workflows built for rapid business growth.'],
+  ['AI integration & cloud DevOps', 'Custom LLM chat agents, automated business workflows, SEO performance tuning, and zero-downtime global cloud deployment.']
+];
+
+/* ==========================================================================
+   4. WEB & TECHNICAL SERVICE ALCOVES
+   ========================================================================== */
+const AZ = [-62, -68, -74, -80],
+      AC = [0x031422, 0x140826, 0x060e22, 0x021515],
+      ALC = [
+        ['Custom websites & 3D web experiences', 'Bespoke brand websites, landing pages, and interactive WebGL experiences that make your business unforgettable.'],
+        ['SaaS platforms & AI web applications', 'End-to-end software products, client portals, and AI-assisted dashboards tailored to your operational workflow.'],
+        ['E-commerce & 3D product configurators', 'High-converting storefronts and real-time 3D product customizers that let customers inspect every detail.'],
+        ['Cloud hosting, SEO & technical maintenance', 'Managed cloud infrastructure, Core Web Vitals optimization, security hardening, and 24/7 engineering support.']
+      ];
+
+AZ.forEach((az, i) => {
+  const xPos = i % 2 === 0 ? -4 : 4;
+  const ped = new THREE.Mesh(
+    new THREE.RingGeometry(2.1, 2.25, 48),
+    new THREE.MeshBasicMaterial({ color: 0x00b8d4, side: THREE.DoubleSide, transparent: true, opacity: 0.35 })
+  );
+  ped.rotation.x = -Math.PI / 2;
+  ped.position.set(xPos, -1.8, az);
+  S.add(ped);
+});
+
+const sph = new THREE.Mesh(
+  new THREE.IcosahedronGeometry(1.65, 40),
+  new THREE.ShaderMaterial({
+    uniforms: { uT: U.uT, uH: { value: 0 } },
+    vertexShader: `
+      uniform float uT, uH;
+      varying vec3 vN, vV;
+      varying float vDisp;
+      void main(){
+        float k = sin(position.x * 2.1 + uT) * sin(position.y * 2.3 + uT * 1.3) * sin(position.z * 2.0 + uT * 0.7);
+        vDisp = k;
+        vec3 p = position + normal * k * (0.24 + uH * 0.5);
+        vN = normalize(normalMatrix * normal);
+        vec4 mv = modelViewMatrix * vec4(p, 1.0);
+        vV = normalize(-mv.xyz);
+        gl_Position = projectionMatrix * mv;
+      }`,
+    fragmentShader: `
+      varying vec3 vN, vV;
+      varying float vDisp;
+      void main(){
+        float f = pow(1.0 - max(dot(vN, vV), 0.0), 2.4);
+        vec3 r = reflect(-vV, vN);
+        vec3 iri = mix(vec3(0.0, 0.65, 0.85), vec3(0.42, 0.16, 0.75), vDisp * 0.5 + 0.5);
+        gl_FragColor = vec4(vec3(0.03, 0.05, 0.1) + iri * f * 0.85 + vec3(0.0, 0.68, 0.85) * pow(max(r.y, 0.0), 4.0) * 0.55, 1.0);
+      }`
+  })
+);
+sph.position.set(-4, 0, AZ[0]);
+S.add(sph);
+
+const nodes = [...Array(68)].map(() => V3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize().multiplyScalar(1.05 + Math.random() * 0.95)),
+      ed = [];
+nodes.forEach((a, i) => nodes.forEach((b, j) => { if (j > i && a.distanceTo(b) < 0.96) ed.push([a, b]); }));
+const net = new THREE.Group();
+net.position.set(4, 1, AZ[1]);
+S.add(net);
+net.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(ed.flat()), new THREE.LineBasicMaterial({ color: 0x7b2cbf, transparent: true, opacity: 0.58 })));
+const pk = new THREE.Points(new THREE.BufferGeometry().setFromPoints(ed.slice(0, 44).map(e => e[0])), new THREE.PointsMaterial({ color: 0x00c8dc, size: 0.095 }));
+net.add(pk);
+
+const prism = new THREE.Group(),
+      glass = new THREE.MeshPhysicalMaterial({ color: 0xcceeff, transmission: 0.92, ior: 1.48, thickness: 2.2, roughness: 0.08, envMapIntensity: 0.65 });
+[[0, 0, 0], [0.95, 0.6, 0.3], [-0.85, -0.5, -0.2], [0.3, -0.8, 0.5]].forEach((p, i) => {
+  const m = new THREE.Mesh(i ? new THREE.OctahedronGeometry(0.8) : new THREE.BoxGeometry(1.6, 1.6, 1.6), glass);
+  m.position.set(...p);
+  prism.add(m);
+});
+prism.position.set(-4, 0, AZ[2]);
+S.add(prism);
+
+const geo = new THREE.Mesh(
+  new THREE.IcosahedronGeometry(1.85, 2),
+  new THREE.ShaderMaterial({
+    wireframe: true,
+    transparent: true,
+    uniforms: U,
+    vertexShader: 'varying vec3 vP;void main(){vP=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
+    fragmentShader: `
+      uniform float uT;
+      varying vec3 vP;
+      void main(){
+        float s = smoothstep(0.32, 0.0, abs(vP.y - sin(uT * 1.4) * 1.8));
+        gl_FragColor = vec4(vec3(0.0, 0.38, 0.72) + vec3(0.0, 0.75, 0.85) * s * 0.75, 0.32 + s * 0.48);
+      }`
+  })
+);
+geo.position.set(4, 0, AZ[3]);
+S.add(geo);
+
+/* ==========================================================================
+   5. PORTFOLIO WORK GALLERY
+   ========================================================================== */
+const CZ = -107,
+      CASES = [
+        ['AETHER-AI SaaS Platform', 'Full-stack AI workflow & analytics web application', 'Load time 0.8s · 99 Lighthouse score', '#00b8d4'],
+        ['KRONOS FinTech Portal', 'Real-time financial dashboard & client trading web app', '120 FPS UI · sub-12ms data sync', '#0051ff'],
+        ['VORTEX 3D Storefront', 'Custom headless e-commerce & 3D product configurator', 'Conversion +38% · LCP 1.1s', '#7b2cbf'],
+        ['NEXUS Enterprise Cloud', 'Corporate web platform & live telemetry portal', '99.998% uptime · global edge CDN', '#00a884'],
+        ['HYPERION Tech Brand Site', 'Interactive 3D marketing website & documentation hub', '+210% organic traffic · 98 SEO', '#3b82f6']
+      ];
+
+[-1.6, 1.6].forEach(yOff => {
+  const gantry = new THREE.Mesh(
+    new THREE.TorusGeometry(10.2, 0.025, 10, 96),
+    new THREE.MeshBasicMaterial({ color: 0x00b8d4, transparent: true, opacity: 0.25 })
+  );
+  gantry.rotation.x = Math.PI / 2;
+  gantry.position.set(0, yOff, CZ + 10);
+  S.add(gantry);
+});
+
+const planes = CASES.map((c, i) => {
+  const cv = document.createElement('canvas');
+  cv.width = 640;
+  cv.height = 400;
+  const x = cv.getContext('2d'),
+        g = x.createLinearGradient(0, 0, 640, 400);
+  g.addColorStop(0, '#040812');
+  g.addColorStop(0.65, '#071224');
+  g.addColorStop(1, c[3]);
+  x.fillStyle = g;
+  x.fillRect(0, 0, 640, 400);
+
+  x.strokeStyle = 'rgba(0,216,232,0.11)';
+  x.lineWidth = 1;
+  for (let k = 0; k < 640; k += 32) {
+    x.beginPath(); x.moveTo(k, 0); x.lineTo(k, 400); x.stroke();
+    x.beginPath(); x.moveTo(0, k % 400); x.lineTo(640, k % 400); x.stroke();
+  }
+  x.strokeStyle = c[3];
+  x.lineWidth = 2;
+  for (let k = 1; k <= 4; k++) {
+    x.beginPath();
+    x.arc(490, 130, k * 24, 0, Math.PI * 2);
+    x.stroke();
+  }
+  x.strokeStyle = 'rgba(0,216,232,0.55)';
+  x.lineWidth = 3;
+  x.strokeRect(10, 10, 620, 380);
+
+  x.fillStyle = '#00d8e8';
+  x.font = '600 17px "JetBrains Mono", monospace';
+  x.fillText('WEBZO BUILD // 0' + (i + 1), 34, 52);
+
+  x.fillStyle = '#eef3f9';
+  x.font = '800 42px Syne, sans-serif';
+  x.fillText(c[0].split(' ')[0], 34, 265);
+  x.font = '500 21px Inter, sans-serif';
+  x.fillStyle = 'rgba(238,243,249,0.85)';
+  x.fillText(c[0].split(' ').slice(1).join(' '), 34, 300);
+  x.font = '500 15px "JetBrains Mono", monospace';
+  x.fillStyle = '#00d8e8';
+  x.fillText(c[2], 34, 344);
+
+  const t = new THREE.CanvasTexture(cv);
+  t.colorSpace = THREE.SRGBColorSpace;
+  const m = new THREE.Mesh(
+    new THREE.PlaneGeometry(3.7, 2.3, 64, 64),
+    new THREE.ShaderMaterial({
+      uniforms: { uTex: { value: t }, uT: U.uT, uV: { value: 0 }, uHov: { value: new THREE.Vector2(0.5, 0.5) }, uH: { value: 0 } },
+      vertexShader: 'uniform float uV, uH;varying vec2 vUv;void main(){vUv=uv;vec3 p=position;p.z+=sin(uv.x*3.14159)*uV*.35 + uH*0.14;gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);}',
+      fragmentShader: `
+        uniform sampler2D uTex;
+        uniform float uT, uH;
+        uniform vec2 uHov;
+        varying vec2 vUv;
+        void main(){
+          vec2 d = vUv - uHov;
+          float r = length(d);
+          vec2 o = normalize(d + 1e-4) * sin(r * 30.0 - uT * 6.0) * exp(-r * 4.0) * uH * 0.022;
+          vec3 col = vec3(
+            texture2D(uTex, vUv + o * 1.5).r,
+            texture2D(uTex, vUv + o).g,
+            texture2D(uTex, vUv + o * 0.5).b
+          ) * 0.92;
+          gl_FragColor = vec4(col, 1.0);
+        }`
+    })
+  );
+  const th = (i - 2) * 0.41;
+  m.position.set(Math.sin(th) * 10, 0, CZ + 10 * (1 - Math.cos(th)));
+  m.rotation.y = -th;
+  S.add(m);
+  return m;
+});
+
+/* ==========================================================================
+   6. GLOBAL INFRASTRUCTURE GLOBE
+   ========================================================================== */
+const GR = 4.5, G = new THREE.Group();
+G.position.set(0, 0, -137);
+S.add(G);
+
+const ll = (la, lo, r = GR) => {
+  la *= Math.PI / 180;
+  lo *= Math.PI / 180;
+  return V3(Math.cos(la) * Math.cos(lo), Math.sin(la), Math.cos(la) * Math.sin(lo)).multiplyScalar(r);
+};
+
+const gp = [], gc = [];
+for (let i = 0, n = 16000; i < n; i++) {
+  const y = 1 - 2 * (i + 0.5) / n,
+        r = Math.sqrt(1 - y * y),
+        ph = i * 2.39996,
+        la = Math.asin(y),
+        lo = Math.atan2(Math.sin(ph) * r, Math.cos(ph) * r),
+        L = Math.sin(la * 2.1 + 1.3) * Math.cos(lo * 1.7 + 0.4) + 0.6 * Math.sin(lo * 3.1 + la * 1.2) + 0.4 * Math.cos(la * 4 + lo * 2) > 0.5;
+  if (L || Math.random() < 0.12) {
+    gp.push(Math.cos(ph) * r * GR, y * GR, Math.sin(ph) * r * GR);
+    gc.push(...(L ? [0, 0.68, 0.85] : [0, 0.14, 0.28]));
+  }
+}
+const gg = new THREE.BufferGeometry();
+gg.setAttribute('position', new THREE.Float32BufferAttribute(gp, 3));
+gg.setAttribute('color', new THREE.Float32BufferAttribute(gc, 3));
+G.add(new THREE.Points(gg, new THREE.PointsMaterial({ size: 0.038, vertexColors: true, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false })));
+
+G.add(new THREE.Mesh(
+  new THREE.SphereGeometry(GR * 1.14, 48, 48),
+  new THREE.ShaderMaterial({
+    side: THREE.BackSide,
+    transparent: true,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    vertexShader: 'varying vec3 vN;void main(){vN=normalize(normalMatrix*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
+    fragmentShader: 'varying vec3 vN;void main(){float i=pow(max(0.,.6-dot(vN,vec3(0.,0.,1.))),3.);gl_FragColor=vec4(0.,.42,.85,1.)*i*1.8;}'
+  })
+));
+
+[1.26, 1.38].forEach((mult, idx) => {
+  const oRing = new THREE.Mesh(
+    new THREE.TorusGeometry(GR * mult, 0.015, 10, 96),
+    new THREE.MeshBasicMaterial({ color: idx ? 0x7b2cbf : 0x00b8d4, transparent: true, opacity: 0.35 })
+  );
+  oRing.rotation.x = idx ? 0.8 : -1.1;
+  oRing.rotation.y = idx ? -0.5 : 0.4;
+  G.add(oRing);
+});
+
+const HQ = [23.02, 72.57];
+[[19.07, 72.88], [12.97, 77.59], [51.5, -0.12], [40.7, -74], [37.77, -122.4], [50.11, 8.68], [1.35, 103.8], [25.2, 55.27], [35.68, 139.7], [-33.87, 151.2]].forEach((c, i) => {
+  const a = ll(...HQ),
+        b = ll(...c),
+        mid = a.clone().add(b).normalize().multiplyScalar(GR * (1 + a.distanceTo(b) / GR * 0.4)),
+        p = new THREE.QuadraticBezierCurve3(a, mid, b).getPoints(64),
+        u = new Float32Array(65).map((_, k) => k / 64),
+        g = new THREE.BufferGeometry().setFromPoints(p);
+  g.setAttribute('aU', new THREE.BufferAttribute(u, 1));
+  G.add(new THREE.Line(g, new THREE.ShaderMaterial({
+    uniforms: { uT: U.uT, uO: { value: i * 0.37 } },
+    transparent: true,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    vertexShader: 'attribute float aU;varying float vU;void main(){vU=aU;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
+    fragmentShader: 'uniform float uT,uO;varying float vU;void main(){float f=fract(vU*4.-uT*1.3+uO);gl_FragColor=vec4(0.,.78,.92,(.12+pow(f,6.))*.75);}'
+  })));
+});
+
+/* ==========================================================================
+   7. INTERACTIVE PHYSICS SANDBOX
+   ========================================================================== */
+const PZ = -168, PG = new THREE.Group();
+PG.position.z = PZ;
+S.add(PG);
+
+const wd = new CANNON.World({ gravity: new CANNON.Vec3(0, -14, 0) });
+wd.defaultContactMaterial.restitution = 0.45;
+wd.defaultContactMaterial.friction = 0.3;
+
+const fb = new CANNON.Body({ mass: 0, shape: new CANNON.Plane() });
+fb.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
+wd.addBody(fb);
+
+[[8.5, 0, 0.5, 9], [-8.5, 0, 0.5, 9], [0, 8.5, 9, 0.5], [0, -8.5, 9, 0.5]].forEach(w => {
+  const b = new CANNON.Body({ mass: 0, shape: new CANNON.Box(new CANNON.Vec3(w[2], 12, w[3])) });
+  b.position.set(w[0], 12, w[1]);
+  wd.addBody(b);
+});
+const ce = new CANNON.Body({ mass: 0, shape: new CANNON.Box(new CANNON.Vec3(9, 0.5, 9)) });
+ce.position.y = 22;
+wd.addBody(ce);
+
+const labs = ['WEBZO', 'REACT', 'NEXT.JS', 'THREE.JS', 'NODE.JS', 'UI/UX', 'SAAS', 'AI', 'WEBZO.CO.IN'],
+      blocks = [];
+let lastC = 0;
+
+const lt = t => {
+  const c = document.createElement('canvas');
+  c.width = c.height = 256;
+  const x = c.getContext('2d');
+  x.fillStyle = '#050b16';
+  x.fillRect(0, 0, 256, 256);
+  x.strokeStyle = '#00b8d4';
+  x.lineWidth = 5;
+  x.strokeRect(6, 6, 244, 244);
+  x.fillStyle = '#00d8e8';
+  x.font = '800 ' + (t.length > 6 ? 34 : 50) + 'px Syne,sans-serif';
+  x.textAlign = 'center';
+  x.textBaseline = 'middle';
+  x.fillText(t, 128, 128);
+  const T = new THREE.CanvasTexture(c);
+  T.colorSpace = THREE.SRGBColorSpace;
+  return T;
+};
+
+const col = e => {
+  const v = Math.abs(e.contact.getImpactVelocityAlongNormal()),
+        n = performance.now();
+  if (v > 1.5 && n - lastC > 85) {
+    lastC = n;
+    snd.click(Math.min(v / 12, 1));
+  }
+};
+
+for (let i = 0; i < 25; i++) {
+  const s = 0.8 + Math.random() * 0.5,
+        sp = i % 4 === 3,
+        t = lt(labs[i % labs.length]),
+        m = new THREE.Mesh(
+          sp ? new THREE.SphereGeometry(s * 0.7, 24, 16) : new THREE.BoxGeometry(s, s, s),
+          new THREE.MeshStandardMaterial({ map: t, emissiveMap: t, emissive: 0xffffff, emissiveIntensity: 0.22, metalness: 0.55, roughness: 0.42 })
+        ),
+        b = new CANNON.Body({
+          mass: 1,
+          shape: sp ? new CANNON.Sphere(s * 0.7) : new CANNON.Box(new CANNON.Vec3(s / 2, s / 2, s / 2)),
+          angularDamping: 0.3
+        });
+  b.position.set((Math.random() - 0.5) * 10, 4 + i * 1.1, (Math.random() - 0.5) * 10);
+  b.addEventListener('collide', col);
+  wd.addBody(b);
+  PG.add(m);
+  blocks.push([m, b]);
+}
+
+const rep = new CANNON.Body({ type: CANNON.Body.KINEMATIC, shape: new CANNON.Sphere(1.5) });
+rep.position.y = -50;
+wd.addBody(rep);
+
+const eb = new CANNON.Body({ mass: 3, shape: new CANNON.Sphere(0.7), linearDamping: 0.3 });
+eb.position.set(0, 2, 5);
+wd.addBody(eb);
+const em = new THREE.Mesh(new THREE.SphereGeometry(0.7, 24, 16), new THREE.MeshStandardMaterial({ color: 0x00d8e8, emissive: 0x0088aa, emissiveIntensity: 0.45, roughness: 0.2 }));
+PG.add(em);
+
+const portal = new THREE.Mesh(new THREE.TorusGeometry(2.4, 0.12, 16, 96), new THREE.MeshStandardMaterial({ color: 0x00d8e8, emissive: 0x006688, emissiveIntensity: 0.4 }));
+portal.position.set(0, 8, -9);
+PG.add(portal);
+
+const burst = new THREE.Points(
+  new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(360), 3)),
+  new THREE.PointsMaterial({ color: 0x00d8e8, size: 0.18, transparent: true, opacity: 0 })
+);
+PG.add(burst);
+let bv = [], bt = 0;
+
+/* ==========================================================================
+   CAMERA SPLINE & INTERACTION STATE (With Real-Time 3D Glass Card Tilt!)
+   ========================================================================== */
+const cp = new THREE.CatmullRomCurve3([V3(0, 2.5, 11), V3(7, 3, -21), V3(0, 0.5, -55), V3(0, 0, -94), V3(0, 0, -122), V3(0, 11, -156)]),
+      tp_ = new THREE.CatmullRomCurve3([V3(0, 2, 0), V3(0, 0, SZ), V3(0, 0, -68), V3(0, 0, CZ + 3), V3(0, 0, -137), V3(0, 1, -168)]);
+
+const m = new THREE.Vector2(), mp = new THREE.Vector2();
+let cx = 0, cy2 = 0, mvv = 0, P = 0, lastP = 0, vel = 0, run = false, A = 0, At = 0, shock = 0, focus = null, drag = false, gv = new THREE.Vector2(), lastIdx = -1, gInv = null;
+let coreExpanded = false, cadWireframe = false, manualBeat = null, manualAlcove = null;
+const keys = {}, ray = new THREE.Raycaster(), L = V3(0, 0, 0), cpos = V3(0, 0, 15);
+
+const ui = e => e.target.closest && e.target.closest('.nav,.g,.btn,#case,form,.work-chip,.feat-pill,.mini-btn');
+
+const ZONE_SPECS = [
+  ['Hero 3D Monolith', 'Interactive WebGL2 core with 360-crystal morphing helix & boolean erosion.', 'NEXT.JS 15 + THREE.JS', '99+ LIGHTHOUSE // 120FPS', 'CUSTOM UI/UX & 3D'],
+  ['4-Layer Tech Stack', 'Modular full-stack web architecture from WebGPU shaders to cloud APIs.', 'REACT / NODE / PYTHON', 'SUB-10MS API SYNC', 'SCALABLE SAAS'],
+  ['Service Pillars', 'Bespoke business websites, SaaS portals, 3D e-commerce & managed DevOps.', 'BESPOKE WEB BUILDS', '+38% AVG CONVERSION', 'SEO & CORE VITALS'],
+  ['Client Builds', 'Production websites and web applications engineered for high growth.', '5 FLAGSHIP PLATFORMS', '99.998% SLA UPTIME', 'PRODUCTION READY'],
+  ['Global Edge Mesh', 'Instant worldwide website delivery from WEBZO HQ in India to 10 edge nodes.', '10 GLOBAL EDGE POPs', '<14MS LATENCY', 'ZERO-DOWNTIME CI/CD'],
+  ['Project Sandbox', 'Interactive Cannon-ES physics arena & direct engineering brief transmission.', 'CANNON-ES 60HZ', 'REALTIME COLLISIONS', 'DIRECT TECH QUOTE']
+];
+
+function openCase(idx) {
+  focus = idx;
+  const c = CASES[focus];
+  $('#ck').textContent = `WEBZO BUILD 0${idx + 1} // LIVE METRICS`;
+  $('#ct').textContent = c[0];
+  $('#cp').textContent = c[1] + ' — ' + c[2];
+  $('#case').classList.add('on');
+  $$('.work-chip').forEach((ch, i) => ch.classList.toggle('act', i === idx));
+  snd.chime();
+}
+
+addEventListener('pointermove', e => {
+  m.set(e.clientX / W() * 2 - 1, -e.clientY / H() * 2 + 1);
+  cx = e.clientX;
+  cy2 = e.clientY;
+  if (drag) {
+    gv.set(e.movementX * 0.005, e.movementY * 0.003);
+  }
+  // Real-Time 3D Glass Tilt & Specular Glare Tracking on all active .g cards
+  $$('.g').forEach(card => {
+    const r = card.getBoundingClientRect();
+    if (r.width === 0 || r.height === 0) return;
+    const gx = cl(((e.clientX - r.left) / r.width) * 100, 0, 100);
+    const gy = cl(((e.clientY - r.top) / r.height) * 100, 0, 100);
+    const nx = ((e.clientX - (r.left + r.width / 2)) / (W() * 0.5));
+    const ny = ((e.clientY - (r.top + r.height / 2)) / (H() * 0.5));
+    const rx = cl(-ny * 9, -10, 10).toFixed(2) + 'deg';
+    const ry = cl(nx * 11, -12, 12).toFixed(2) + 'deg';
+    card.style.setProperty('--gx', gx.toFixed(1) + '%');
+    card.style.setProperty('--gy', gy.toFixed(1) + '%');
+    card.style.setProperty('--rx', rx);
+    card.style.setProperty('--ry', ry);
+  });
+
+  $$('.mag').forEach(b => {
+    const r = b.getBoundingClientRect(),
+          dx = e.clientX - r.left - r.width / 2,
+          dy = e.clientY - r.top - r.height / 2;
+    b.style.transform = Math.hypot(dx, dy) < 90 ? `translate3d(${dx * 0.25}px,${dy * 0.25}px,46px)` : '';
+  });
+});
+
+addEventListener('pointerdown', e => {
+  snd.init();
+  if (ui(e)) return;
+  if (hit && run) {
+    if (hit.object.userData.ci !== undefined) {
+      openCase(hit.object.userData.ci);
+      return;
+    }
+    if (hit.object.userData.isNode) {
+      hit.object.userData.spinBoost = 3.5;
+      U.uPulse.value = 1.0;
+      snd.chime();
+      return;
+    }
+  }
+  if (P > 0.7 && P < 0.9) {
+    drag = true;
+  }
+});
+
+addEventListener('pointerup', () => drag = false);
+addEventListener('keydown', e => keys[e.key.toLowerCase()] = 1);
+addEventListener('keyup', e => keys[e.key.toLowerCase()] = 0);
+
+$('#cx').onclick = () => {
+  focus = null;
+  $('#case').classList.remove('on');
+  $$('.work-chip').forEach(ch => ch.classList.remove('act'));
+};
+
+$$('.work-chip').forEach(chip => {
+  chip.onclick = () => {
+    snd.init();
+    openCase(Number(chip.dataset.ci));
+  };
+});
+
+$$('#stackBtns .feat-pill').forEach(btn => {
+  btn.onclick = () => {
+    snd.init();
+    manualBeat = Number(btn.dataset.bi);
+    snd.chime();
+  };
+});
+
+$$('#alcBtns .feat-pill').forEach(btn => {
+  btn.onclick = () => {
+    snd.init();
+    const idx = Number(btn.dataset.ai);
+    manualAlcove = idx;
+    const targetP = (0.36 + idx * 0.055);
+    scrollTo({ top: targetP * (document.documentElement.scrollHeight - H()), behavior: 'smooth' });
+    snd.chime();
+  };
+});
+
+$('#btnExplode').onclick = e => {
+  snd.init();
+  coreExpanded = !coreExpanded;
+  e.target.classList.toggle('act', coreExpanded);
+  snd.chime();
+};
+$('#btnWire').onclick = e => {
+  snd.init();
+  cadWireframe = !cadWireframe;
+  e.target.classList.toggle('act', cadWireframe);
+  outer.visible = !cadWireframe;
+  cy.opacity = cadWireframe ? 0.65 : 0.3;
+  snd.chime();
+};
+$('#btnPulse').onclick = () => {
+  snd.init();
+  U.uPulse.value = 1.2;
+  shock = 0.4;
+  interactiveNodes.forEach(n => { n.userData.spinBoost = 2.5; });
+  snd.chime();
+};
+
+$$('.btn,.nav a,.nav button,.work-chip,.feat-pill,.mini-btn').forEach(b => {
+  b.addEventListener('pointerenter', () => {
+    snd.tone(CALM_MODES[snd.modeIdx].scale[2], 0.4, 'sine', 0.012);
+    $('#cr').style.cssText += 'width:54px;height:54px;margin:-27px;border-color:#00D8E8;background:rgba(0,216,232,0.06)';
+  });
+  b.addEventListener('pointerleave', () => {
+    $('#cr').style.width = $('#cr').style.height = '34px';
+    $('#cr').style.margin = '-17px';
+    $('#cr').style.background = 'transparent';
+  });
+});
+
+$$('[data-p]').forEach(a => a.onclick = () => {
+  snd.init();
+  focus = null;
+  manualBeat = null;
+  manualAlcove = null;
+  $('#case').classList.remove('on');
+  if (run) scrollTo({ top: a.dataset.p / 5 * (document.documentElement.scrollHeight - H()), behavior: 'smooth' });
+});
+
+$('#snd').onclick = e => {
+  snd.init();
+  snd.set(!snd.on);
+  e.target.textContent = '[ Sound: ' + (snd.on ? 'on' : 'off') + ' ]';
+};
+
+$('#calmMode').onclick = e => {
+  const modeName = snd.cycleMode();
+  e.target.textContent = modeName;
+};
+
+$('#enter').onclick = () => {
+  snd.init();
+  snd.chime();
+  run = true;
+  shock = 0.55;
+  At = 0;
+  $('#o0').classList.remove('on');
+  document.body.style.overflow = 'auto';
+  pu.uDim.value = 0.45;
+};
+
+$('#sw').onclick = () => {
+  blocks.forEach(([, b]) => {
+    b.applyImpulse(new CANNON.Vec3((Math.random() - 0.5) * 14, 12, (Math.random() - 0.5) * 14));
+  });
+  shock = 0.45;
+  snd.chime();
+};
+
+$('#gi').onclick = () => {
+  wd.gravity.y = 14;
+  clearTimeout(gInv);
+  gInv = setTimeout(() => wd.gravity.y = -14, 1500);
+  snd.chime();
+};
+
+$('#f').onsubmit = e => {
+  e.preventDefault();
+  bv = [...Array(120)].map(() => V3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).multiplyScalar(14));
+  bt = 1;
+  burst.geometry.attributes.position.array.fill(0);
+  burst.geometry.attributes.position.needsUpdate = true;
+  burst.position.copy(portal.position);
+  snd.chime();
+  e.target.reset();
+  const toast = $('#fToast');
+  toast.classList.add('on');
+  setTimeout(() => toast.classList.remove('on'), 4500);
+};
+
+let pr = 0;
+const li = setInterval(() => {
+  pr = Math.min(100, Math.round(pr + 1.5 + mvv * 2));
+  At = pr / 100;
+  $('#pc').textContent = pr + '%';
+  $('#pbar').style.width = pr + '%';
+  if (pr >= 100) {
+    clearInterval(li);
+    $('#enter').style.display = 'inline-block';
+    $('#enter').style.pointerEvents = 'auto';
+  }
+}, 32);
+
+let hit = null, lastHoveredNode = null;
+const OV = ['o1', 'o2', '', 'o4', 'o5g', 'o5'];
+let fr = 0, ft = performance.now(), fps = 60;
+const clock = new THREE.Clock();
+const targetSwarmPos = V3();
+
+function loop() {
+  requestAnimationFrame(loop);
+  const dt = Math.min(clock.getDelta(), 0.05),
+        t = clock.elapsedTime;
+  U.uT.value = t;
+  U.uPulse.value = Math.max(0, U.uPulse.value - dt * 0.9);
+
+  mvv = lp(mvv, Math.min(m.distanceTo(mp) * 25, 1.5), 0.1);
+  mp.copy(m);
+  pu.uMV.value = mvv;
+  A = lp(A, At, 0.05);
+  pu.uA.value = A;
+
+  const mx = document.documentElement.scrollHeight - H();
+  P = lp(P, run ? scrollY / mx : 0, 0.055);
+  vel = lp(vel, (P - lastP) * 60, 0.1);
+  lastP = P;
+  snd.mod(vel, mvv);
+
+  $('#topNav').style.setProperty('--sp', (P * 100).toFixed(1) + '%');
+
+  /* Camera */
+  let tc, tl;
+  if (focus !== null) {
+    const p = planes[focus];
+    tc = p.position.clone().add(V3(Math.sin(p.rotation.y) * 5.4, 0, Math.cos(p.rotation.y) * 5.4));
+    tl = p.position;
+  } else if (run) {
+    tc = cp.getPoint(P).add(V3(m.x * 0.65, m.y * 0.42, 0));
+    tl = tp_.getPoint(P);
+  } else {
+    tc = V3(m.x * 1.5, m.y, 15);
+    tl = V3(0, 0, 0);
+  }
+  cpos.lerp(tc, 0.045);
+  cam.position.copy(cpos);
+  L.lerp(tl, 0.055);
+  cam.lookAt(L);
+
+  /* 3D Cursor Projection */
+  ray.setFromCamera(m, cam);
+  const cursorWorld = V3();
+  ray.ray.at(11, cursorWorld);
+  U.uMouse3D.value.lerp(cursorWorld, 0.15);
+
+  /* Zones & Navigation Active State */
+  const s5 = P * 5,
+        z = Math.round(s5),
+        zf = Math.abs(s5 - z);
+  let show = '';
+  if (run && focus === null) {
+    if (cam.position.z < -52 && cam.position.z > -90) show = 'o3';
+    else if (zf < 0.36 && OV[z]) show = OV[z];
+  }
+  $$('.ov:not(#o0)').forEach(o => o.classList.toggle('on', o.id === show));
+
+  const activeNavIdx = show === 'o3' ? 2 : z;
+  $$('.nav a[data-p]').forEach(a => a.classList.toggle('act', Number(a.dataset.p) === activeNavIdx));
+
+  const showSpecDock = run && focus === null && show !== 'o5';
+  $('#specDock').classList.toggle('on', showSpecDock);
+  if (showSpecDock) {
+    const sp = ZONE_SPECS[cl(activeNavIdx, 0, 5)];
+    $('#st').textContent = sp[0];
+    $('#spDesc').textContent = sp[1];
+    $('#sv1').textContent = sp[2];
+    $('#sv2').textContent = sp[3];
+    $('#sv3').textContent = sp[4];
+  }
+
+  if (Math.abs(vel) > 0.15) manualBeat = null;
+  const bi = manualBeat !== null ? manualBeat : cl(Math.floor((s5 - 0.7) / 0.6 * 4), 0, 3);
+  $('#bk').textContent = `TECHNICAL STACK 0${bi + 1} // 04`;
+  $('#bt').textContent = BEATS[bi][0];
+  $('#bp').textContent = BEATS[bi][1];
+  $$('#bPills .step-pill').forEach((el, idx) => el.classList.toggle('on', idx === bi));
+  $$('#stackBtns .feat-pill').forEach((el, idx) => el.classList.toggle('act', idx === bi));
+
+  let ai = 0, bd = 1e9;
+  AZ.forEach((a, i) => {
+    const d = Math.abs(cam.position.z - 6 - a);
+    if (d < bd) { bd = d; ai = i; }
+  });
+  $('#ak').textContent = `SERVICE PILLAR 0${ai + 1} // 04`;
+  $('#at').textContent = ALC[ai][0];
+  $('#ap').textContent = ALC[ai][1];
+  $$('#aPills .step-pill').forEach((el, idx) => el.classList.toggle('on', idx === ai));
+  $$('#alcBtns .feat-pill').forEach((el, idx) => el.classList.toggle('act', idx === ai));
+
+  if (show === 'o3' && ai !== lastIdx) {
+    lastIdx = ai;
+    snd.chime();
+  }
+  const fogT = show === 'o3' ? new THREE.Color(AC[ai]) : VOID;
+  bg.lerp(fogT, 0.04);
+  S.fog.color.copy(bg);
+
+  /* Update 360-Instance Morphing Cyber-Crystal Swarm */
+  const expMult = coreExpanded ? 1.45 : 1.0;
+  for (let i = 0; i < SWARM_N; i++) {
+    const d = swarmData[i];
+    const u = i / SWARM_N;
+    const ang = u * Math.PI * 24 + t * 0.7;
+
+    if (activeNavIdx === 0) {
+      const strand = (i % 2) * Math.PI;
+      const rad = (3.8 + Math.sin(u * 18 + t) * 1.1) * expMult;
+      targetSwarmPos.set(
+        Math.cos(ang * 0.5 + strand) * rad,
+        2.6 + (u - 0.5) * 8.5,
+        Math.sin(ang * 0.5 + strand) * rad
+      );
+    } else if (activeNavIdx === 1) {
+      const layer = i % 4;
+      const rad = (4.2 + (i % 7) * 0.35) * expMult;
+      targetSwarmPos.set(
+        Math.cos(ang + layer) * rad,
+        (layer - 1.5) * 2.2 + Math.sin(ang * 2) * 0.25,
+        SZ + Math.sin(ang + layer) * rad
+      );
+    } else if (activeNavIdx === 2) {
+      const side = i % 2 === 0 ? -1 : 1;
+      const zSpan = -60 - u * 24;
+      targetSwarmPos.set(
+        side * (3.2 + Math.sin(u * 12 + t * 1.2) * 2.2),
+        1.2 + Math.cos(u * 16 - t * 1.4) * 2.4,
+        zSpan
+      );
+    } else if (activeNavIdx === 3) {
+      const arc = (u - 0.5) * Math.PI * 1.35;
+      const rad = 11.2 + (i % 5) * 0.45;
+      targetSwarmPos.set(
+        Math.sin(arc) * rad,
+        (i % 9 - 4) * 0.65 + Math.sin(t * 1.5 + i) * 0.2,
+        CZ + 10 * (1 - Math.cos(arc))
+      );
+    } else if (activeNavIdx === 4) {
+      const rad = (6.2 + (i % 6) * 0.42) * expMult;
+      const tilt = Math.sin(ang) * 2.4;
+      targetSwarmPos.set(
+        Math.cos(ang) * rad,
+        tilt * 0.75,
+        -137 + Math.sin(ang) * rad
+      );
+    } else {
+      const rad = 2.6 + u * 6.5;
+      targetSwarmPos.set(
+        Math.cos(ang) * rad,
+        3.5 + u * 7.5,
+        PZ - 4 + Math.sin(ang) * rad
+      );
+    }
+
+    const distToCursor = d.pos.distanceTo(U.uMouse3D.value);
+    if (distToCursor < 4.2) {
+      const push = d.pos.clone().sub(U.uMouse3D.value).normalize().multiplyScalar((4.2 - distToCursor) * 0.45);
+      targetSwarmPos.add(push);
+    }
+
+    d.pos.lerp(targetSwarmPos, 0.065);
+    dummy.position.copy(d.pos);
+    dummy.rotation.set(t * 1.2 + i, t * 0.8 + i, 0);
+    const sScale = 0.75 + Math.sin(t * 2.5 + i) * 0.3 + U.uPulse.value * 0.6;
+    dummy.scale.setScalar(sScale);
+    dummy.updateMatrix();
+    swarmMesh.setMatrixAt(i, dummy.matrix);
+  }
+  swarmMesh.instanceMatrix.needsUpdate = true;
+
+  /* Hero Monolith & Orbital Rings */
+  mono.rotation.y = lp(mono.rotation.y, m.x * 0.65 + t * 0.08, 0.04);
+  mono.rotation.x = lp(mono.rotation.x, -m.y * 0.15, 0.04);
+  monoWire.scale.lerp(V3(expMult, expMult, expMult), 0.06);
+  core.rotation.y = t * 0.65;
+  core.rotation.x = t * 0.42;
+  gyroRings.forEach((r, idx) => {
+    r.rotation.x += r.userData.sx * dt * (coreExpanded ? 2.0 : 1.0);
+    r.rotation.y += r.userData.sy * dt * (coreExpanded ? 2.0 : 1.0);
+    const rs = coreExpanded ? 1.25 + idx * 0.08 : 1.0;
+    r.scale.lerp(V3(rs, rs, rs), 0.06);
+  });
+  shards.forEach(s => {
+    const d = s.userData;
+    const rad = d.r * (coreExpanded ? 1.38 : 1.0);
+    s.position.set(Math.cos(d.a + t * 0.34) * rad, d.y + Math.sin(t * 1.3 + d.a) * 0.16, Math.sin(d.a + t * 0.34) * rad);
+    s.rotation.set(t, t * 0.7, 0);
+  });
+
+  /* Raycast */
+  hit = run ? ray.intersectObjects([outer, sph, ...planes, ...interactiveNodes], false)[0] || null : null;
+  let hr = 0, sh = 0, ph2 = -1, hovNode = null;
+  if (hit) {
+    if (hit.object === outer) {
+      dm.uniforms.uHit.value.copy(hit.point);
+      hr = 1;
+    } else if (hit.object === sph) {
+      sh = 1;
+    } else if (hit.object.userData.isNode) {
+      hovNode = hit.object;
+      hovNode.userData.spinBoost = Math.max(hovNode.userData.spinBoost, 1.8);
+      if (lastHoveredNode !== hovNode) {
+        lastHoveredNode = hovNode;
+        snd.tone(CALM_MODES[snd.modeIdx].scale[3], 0.35, 'sine', 0.014);
+      }
+    } else {
+      ph2 = planes.indexOf(hit.object);
+      hit.object.userData.ci = ph2;
+      planes[ph2].material.uniforms.uHov.value.copy(hit.uv);
+    }
+  } else {
+    lastHoveredNode = null;
+  }
+
+  const insp = $('#nodeInsp');
+  if (hovNode) {
+    insp.textContent = `3D MODULE // ${hovNode.userData.label} [CLICK TO PULSE]`;
+    insp.classList.add('on');
+  } else if (hr) {
+    insp.textContent = `3D MONOLITH CORE // BOOLEAN SHADER ACTIVE`;
+    insp.classList.add('on');
+  } else {
+    insp.classList.remove('on');
+  }
+
+  interactiveNodes.forEach(mesh => {
+    const ud = mesh.userData;
+    ud.spinBoost = Math.max(0, ud.spinBoost - dt * 1.5);
+    const sp = 0.5 + ud.spinBoost * 2.8;
+    mesh.rotation.x += dt * sp;
+    mesh.rotation.y += dt * sp * 1.2;
+    ud.wire.rotation.x = -mesh.rotation.x;
+    ud.wire.rotation.y = -mesh.rotation.y;
+    ud.r1.rotation.z += dt * (0.8 + ud.spinBoost * 2.0);
+    ud.r2.rotation.x += dt * (0.6 + ud.spinBoost * 2.0);
+    ud.group.position.y = ud.baseY + Math.sin(t * 1.2 + ud.phase) * 0.22;
+    const sc = hovNode === mesh ? 1.32 : 1.0 + ud.spinBoost * 0.1;
+    mesh.scale.lerp(V3(sc, sc, sc), 0.12);
+    ud.r1.scale.lerp(V3(sc, sc, sc), 0.12);
+  });
+
+  planes.forEach((p, i) => {
+    p.userData.ci = i;
+    const u = p.material.uniforms;
+    u.uV.value = lp(u.uV.value, vel * 25, 0.1);
+    u.uH.value = lp(u.uH.value, i === ph2 ? 1 : 0, 0.1);
+  });
+  dm.uniforms.uR.value = lp(dm.uniforms.uR.value, hr * 0.95, 0.08);
+  sph.material.uniforms.uH.value = lp(sph.material.uniforms.uH.value, sh, 0.08);
+
+  /* Strata */
+  const e = cl(1 - Math.abs(s5 - 1) * 1.6, 0, 1) * (coreExpanded ? 1.25 : 1.0);
+  strata.forEach((g, i) => {
+    const activeBoost = i === bi ? 0.25 : 0;
+    g.position.y = (i - 1.5) * (0.45 + e * 1.9);
+    g.rotation.y = e * (i - 1.5) * 0.5 + t * (0.05 + activeBoost * 0.2);
+    g.position.x = e * (i % 2 ? 1 : -1) * 0.7;
+    const sc = i === bi ? 1.08 : 1.0;
+    g.scale.lerp(V3(sc, sc, sc), 0.08);
+  });
+
+  /* Alcoves */
+  prism.rotation.set(t * 0.3, t * 0.5, 0);
+  geo.rotation.y = t * 0.3;
+  net.rotation.y = t * 0.2;
+  sph.rotation.y = t * 0.2;
+  const pa2 = pk.geometry.attributes.position;
+  ed.slice(0, 44).forEach((q, i) => {
+    const f = (t * 0.4 + i * 0.13) % 1;
+    pa2.setXYZ(i, lp(q[0].x, q[1].x, f), lp(q[0].y, q[1].y, f), lp(q[0].z, q[1].z, f));
+  });
+  pa2.needsUpdate = true;
+
+  /* Globe */
+  if (!drag) gv.multiplyScalar(0.95);
+  G.rotation.y += gv.x + 0.0016;
+  G.rotation.x = cl(G.rotation.x + gv.y, -1, 1);
+
+  /* Physics */
+  const pz = P > 0.85 && run;
+  if (pz) {
+    const pt = new THREE.Vector3();
+    ray.ray.intersectPlane(new THREE.Plane(V3(0, 1, 0), -0.8), pt);
+    if (pt && !ui({ target: document.elementFromPoint(cx, cy2) || document.body })) {
+      const nx = pt.x, nz = pt.z - PZ;
+      rep.velocity.set((nx - rep.position.x) / dt, 0, (nz - rep.position.z) / dt);
+      rep.position.set(cl(nx, -8, 8), 0.8, cl(nz, -8, 8));
+    }
+  } else {
+    rep.position.y = -50;
+    rep.velocity.set(0, 0, 0);
+  }
+  if (pz) {
+    const f = 60;
+    if (keys.w || keys.arrowup) eb.applyForce(new CANNON.Vec3(0, 0, -f), eb.position);
+    if (keys.s || keys.arrowdown) eb.applyForce(new CANNON.Vec3(0, 0, f), eb.position);
+    if (keys.a || keys.arrowleft) eb.applyForce(new CANNON.Vec3(-f, 0, 0), eb.position);
+    if (keys.d || keys.arrowright) eb.applyForce(new CANNON.Vec3(f, 0, 0), eb.position);
+  }
+  wd.step(1 / 60, dt, 3);
+  blocks.forEach(([ms, b]) => {
+    ms.position.copy(b.position);
+    ms.quaternion.copy(b.quaternion);
+  });
+  em.position.copy(eb.position);
+  portal.rotation.y = t;
+  portal.scale.setScalar(1 + Math.sin(t * 3) * 0.05);
+
+  if (bt > 0) {
+    bt = Math.max(0, bt - dt * 0.8);
+    const a = burst.geometry.attributes.position;
+    bv.forEach((v, i) => a.setXYZ(i, a.getX(i) + v.x * dt, a.getY(i) + v.y * dt, a.getZ(i) + v.z * dt));
+    a.needsUpdate = true;
+    burst.material.opacity = bt;
+  }
+
+  /* Post-Processing & Cursor */
+  shock *= 0.94;
+  bloom.strength = 0.45 + shock * 0.85;
+  fin.uniforms.uAmt.value = 0.0012 + Math.abs(vel) * 0.02 + shock * 0.025;
+  fin.uniforms.uT.value = t % 10;
+
+  $('#cd').style.transform = `translate(${cx}px,${cy2}px)`;
+  const cr = $('#cr'), k = cr._p || [cx, cy2];
+  k[0] = lp(k[0], cx, 0.18);
+  k[1] = lp(k[1], cy2, 0.18);
+  cr._p = k;
+  cr.style.transform = `translate(${k[0]}px,${k[1]}px)`;
+
+  fr++;
+  if (performance.now() - ft > 500) {
+    fps = Math.round(fr * 1000 / (performance.now() - ft));
+    fr = 0;
+    ft = performance.now();
+    $('#hud').innerHTML = `FPS ${fps} · DEPTH ${Math.round(P * 100)}% · ZONE 0${run ? z + 1 : 1}<br>XYZ ${cam.position.x.toFixed(1)} ${cam.position.y.toFixed(1)} ${cam.position.z.toFixed(1)} · AUDIO ${snd.on ? CALM_MODES[snd.modeIdx].name.toUpperCase() : 'MUTED'}`;
+  }
+  comp.render();
+}
+
+addEventListener('resize', () => {
+  cam.aspect = W() / H();
+  cam.updateProjectionMatrix();
+  R.setSize(W(), H());
+  comp.setSize(W(), H());
+  pu.uPx.value = H() * R.getPixelRatio() * 0.95;
+});
+loop();
+</script>
+</body>
+</html>
