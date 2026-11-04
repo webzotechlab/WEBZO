@@ -3,8 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="WEBZO builds custom business websites, interactive 3D WebGL experiences, scalable SaaS apps and AI-powered digital platforms.">
+<meta name="theme-color" content="#020408">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js">
 <title>WEBZO — Custom Web Development &amp; Technical Digital Engineering</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap"></noscript>
 <style>
 :root{
   --v:#020408;
@@ -22,9 +29,10 @@
 *{box-sizing:inherit}
 html,body{margin:0;width:100%;min-height:100%;background:var(--v);color:var(--ti);font:clamp(13.5px,1vw,15px)/1.6 Inter,sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;-webkit-text-size-adjust:100%;text-size-adjust:100%;overscroll-behavior:none}
 ::selection{background:var(--cy);color:var(--v)}
-body{overflow:hidden;overflow-x:hidden}
-canvas{position:fixed;inset:0;width:100vw;height:100vh;width:100dvw;height:100dvh;display:block;touch-action:none;-webkit-user-select:none;user-select:none}
-#sc{height:750vh;pointer-events:none}
+body{overflow-x:hidden}
+canvas{position:fixed;inset:0;width:100vw;height:100vh;width:100dvw;height:100dvh;display:block;touch-action:pan-y;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;transform:translateZ(0)}
+@media(hover:none),(pointer:coarse){canvas{width:100vw;height:100vh;height:100lvh}}
+#sc{height:750vh;height:750svh;pointer-events:none}
 
 /* Soft Atmospheric Vignette */
 .fx-vignette{
@@ -358,41 +366,6 @@ canvas{position:fixed;inset:0;width:100vw;height:100vh;width:100dvw;height:100dv
   box-shadow:0 0 16px rgba(0,216,232,.38),inset 0 1px 0 rgba(255,255,255,.65);
 }
 
-/* Preloader Overlay (#o0) */
-#o0{
-  inset:0;left:0;bottom:0;width:100%;max-width:none;max-height:none;display:grid;place-content:center;
-  text-align:center;transform:none;padding:16px;
-  background:radial-gradient(circle at 50% 50%, rgba(3,8,18,.28) 0%, rgba(2,4,8,.86) 100%);
-}
-#o0.on{pointer-events:auto}
-.pre-card{
-  padding:clamp(22px,4vh,38px) clamp(18px,4vw,46px);border-radius:20px;
-  width:min(560px,92vw);pointer-events:auto;
-  background:linear-gradient(135deg,rgba(255,255,255,.12) 0%,rgba(10,22,46,.32) 100%);
-  -webkit-backdrop-filter:blur(22px) saturate(190%);
-  backdrop-filter:blur(22px) saturate(190%);
-  border-top:1px solid rgba(255,255,255,.45);
-  border-left:1px solid rgba(255,255,255,.28);
-  border-right:1px solid rgba(0,216,232,.3);
-  border-bottom:1px solid rgba(0,216,232,.35);
-  box-shadow:0 28px 80px rgba(0,0,0,.75),inset 0 1.5px 0 rgba(255,255,255,.48);
-  display:flex;flex-direction:column;align-items:center;
-}
-#o0 .n{
-  font:800 clamp(44px,min(8.5vw,11vh),108px)/1 Syne,sans-serif;
-  color:var(--cy);
-  margin:6px 0 12px;
-}
-.pre-bar-wrap{
-  width:min(300px,70vw);height:4px;background:rgba(255,255,255,.12);
-  border-radius:99px;overflow:hidden;margin:0 0 16px;
-}
-.pre-bar{
-  height:100%;width:0%;
-  background:linear-gradient(90deg,var(--co),var(--cy));
-  transition:width .1s linear;
-}
-#o0 .btn{display:none;margin-top:8px;touch-action:manipulation;pointer-events:auto}
 
 /* Strata & Alcove Pills */
 .step-pills{display:flex;gap:6px;margin-bottom:12px;pointer-events:auto;transform:translateZ(28px)}
@@ -507,6 +480,23 @@ canvas{position:fixed;inset:0;width:100vw;height:100vh;width:100dvw;height:100dv
   .kicker{font-size:9.5px;letter-spacing:.12em;padding:6px 10px}
 }
 .g::-webkit-scrollbar,.ov::-webkit-scrollbar{display:none;width:0;height:0}
+/* ---- Touch / mobile compatibility (does not alter the desktop look) ---- */
+@media(hover:none),(pointer:coarse){
+  .g{transform-style:flat;transform:none;animation:none;
+     backdrop-filter:blur(12px) saturate(170%) brightness(1.1);-webkit-backdrop-filter:blur(12px) saturate(170%) brightness(1.1)}
+  .g::before{animation:none;background-position:50% 0}
+  .g::after{-webkit-backdrop-filter:none;backdrop-filter:none;transform:none}
+  .kicker,.ov h1,.ov h2,.ov p,.feat-grid,.btn-row,.step-pills,.stats,.work-chips,.spec-list,.spec-actions,#o5 form{transform:none}
+  .btn,.btn:hover{transform:none}
+  .feat-pill:hover,.feat-pill.act,.work-chip:hover,.work-chip.act{transform:none}
+  .nav a,.nav button,.feat-pill,.work-chip,.mini-btn,.btn{min-height:32px}
+}
+@media(max-width:768px){
+  #o5 input,#o5 select,#o5 textarea{font-size:16px}
+  #o5 .g{max-height:calc(100vh - 118px);max-height:calc(100dvh - 118px);overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;-webkit-overflow-scrolling:touch}
+  .nav{overflow:hidden}
+}
+
 @media(max-height:680px){
   .ov{bottom:clamp(36px,4.5vh,52px)}
   .g{padding:14px 18px}
@@ -530,12 +520,12 @@ canvas{position:fixed;inset:0;width:100vw;height:100vh;width:100dvw;height:100dv
   <div class="brand-wrap" data-p="0" title="WEBZO — Web Development &amp; Technical Studio">
     <b>WEBZO</b>
   </div>
-  <a data-p="0" class="act">Home</a>
-  <a data-p="1">Core</a>
-  <a data-p="2">Services</a>
-  <a data-p="3">Work</a>
-  <a data-p="4">Network</a>
-  <a data-p="5">Contact</a>
+  <a role="button" tabindex="0" data-p="0" class="act">Home</a>
+  <a role="button" tabindex="0" data-p="1">Core</a>
+  <a role="button" tabindex="0" data-p="2">Services</a>
+  <a role="button" tabindex="0" data-p="3">Work</a>
+  <a role="button" tabindex="0" data-p="4">Network</a>
+  <a role="button" tabindex="0" data-p="5">Contact</a>
   <div class="snd-group snd-on" id="sndWrap">
     <span class="eq-bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
     <button id="snd" type="button">[ Sound: on ]</button>
@@ -560,17 +550,6 @@ canvas{position:fixed;inset:0;width:100vw;height:100vh;width:100dvw;height:100dv
     <button type="button" class="mini-btn" id="btnPulse">PULSE CORRIDOR</button>
   </div>
 </aside>
-
-<!-- 0: Preloader -->
-<section class="ov on" id="o0">
-  <div class="pre-card">
-    <div class="kicker">WEB DEVELOPMENT &amp; TECHNICAL ENGINEERING // WEBZO.CO.IN</div>
-    <div class="n" id="pc">0%</div>
-    <div class="pre-bar-wrap"><div class="pre-bar" id="pbar"></div></div>
-    <p style="margin-bottom:14px">Assembling the WEBZO 3D neural swarm &amp; calming soundscape</p>
-    <button class="btn mag" id="enter">[ INITIALIZE WEBZO.CO.IN // ENTER EXPERIENCE ]</button>
-  </div>
-</section>
 
 <!-- 1: Hero -->
 <section class="ov" id="o1">
@@ -708,8 +687,10 @@ import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import * as CANNON from 'cannon-es';
 
-const $ = s => document.querySelector(s),
-      $$ = s => document.querySelectorAll(s),
+const _q1 = new Map(), _qa = new Map();
+const COARSE = matchMedia('(hover:none),(pointer:coarse)').matches;
+const $ = s => { let r = _q1.get(s); if (r === undefined) { r = document.querySelector(s); _q1.set(s, r); } return r; },
+      $$ = s => { let r = _qa.get(s); if (r === undefined) { r = document.querySelectorAll(s); _qa.set(s, r); } return r; },
       W = () => innerWidth,
       H = () => innerHeight,
       V3 = (...a) => new THREE.Vector3(...a),
@@ -911,11 +892,12 @@ class WebzoSoundEngine {
   }
 }
 const snd = new WebzoSoundEngine();
+function setT(el, v) { if (el && el.textContent !== v) el.textContent = v; }
 
 /* ==========================================================================
    THREE.JS RENDERER & CINEMATIC POST-PROCESSING
    ========================================================================== */
-const MAX_DPR = 1.5;
+const MAX_DPR = COARSE ? 1.25 : 1.5;
 const getDPR = () => Math.min(window.devicePixelRatio || 1, MAX_DPR);
 let R;
 try {
@@ -924,7 +906,7 @@ try {
   R = new THREE.WebGLRenderer({ canvas: $('#c'), antialias: false });
 }
 R.setPixelRatio(getDPR());
-R.setSize(W(), H());
+R.setSize(W(), H(), false);
 R.toneMapping = THREE.ACESFilmicToneMapping;
 R.toneMappingExposure = 0.9;
 
@@ -1753,9 +1735,9 @@ const ZONE_SPECS = [
 function openCase(idx) {
   focus = idx;
   const c = CASES[focus];
-  $('#ck').textContent = `WEBZO BUILD 0${idx + 1} // LIVE METRICS`;
-  $('#ct').textContent = c[0];
-  $('#cp').textContent = c[1] + ' — ' + c[2];
+  setT($('#ck'), `WEBZO BUILD 0${idx + 1} // LIVE METRICS`);
+  setT($('#ct'), c[0]);
+  setT($('#cp'), c[1] + ' — ' + c[2]);
   $('#case').classList.add('on');
   $$('.work-chip').forEach((ch, i) => ch.classList.toggle('act', i === idx));
   snd.chime();
@@ -1763,12 +1745,18 @@ function openCase(idx) {
 
 let lastTX = 0, lastTY = 0, touchScrolling = false;
 
-function updateTiltAndMagnet(px, py) {
+function updateTiltAndMagnet(px, py, touch) {
   m.set(px / Math.max(W(), 1) * 2 - 1, -py / Math.max(H(), 1) * 2 + 1);
   cx = px;
   cy2 = py;
-  // Real-Time 3D Glass Tilt & Specular Glare Tracking on all active .g cards
+  if (!touch) tiltDirty = true;
+}
+
+function applyTilt(px, py) {
+  // Real-Time 3D Glass Tilt & Specular Glare Tracking on visible .g cards
   $$('.g').forEach(card => {
+    const host = card.closest('.ov');
+    if (host && !host.classList.contains('on')) return;
     const r = card.getBoundingClientRect();
     if (r.width === 0 || r.height === 0) return;
     const gx = cl(((px - r.left) / r.width) * 100, 0, 100);
@@ -1801,78 +1789,80 @@ function resetTiltAndMagnet() {
 }
 
 addEventListener('pointermove', e => {
-  const pt = (e.touches && e.touches[0]) || e;
-  const px = pt.clientX !== undefined ? pt.clientX : cx;
-  const py = pt.clientY !== undefined ? pt.clientY : cy2;
-  const dx = e.movementX !== undefined ? e.movementX : (px - lastTX);
-  const dy = e.movementY !== undefined ? e.movementY : (py - lastTY);
+  const px = e.clientX !== undefined ? e.clientX : cx;
+  const py = e.clientY !== undefined ? e.clientY : cy2;
+  const dx = e.movementX !== undefined && e.pointerType !== 'touch' ? e.movementX : (px - lastTX);
+  const dy = e.movementY !== undefined && e.pointerType !== 'touch' ? e.movementY : (py - lastTY);
   lastTX = px;
   lastTY = py;
-  updateTiltAndMagnet(px, py);
+  overUI = !!ui(e);
+  updateTiltAndMagnet(px, py, e.pointerType === 'touch');
   if (drag) {
     gv.set(dx * 0.005, dy * 0.003);
   }
 }, { passive: true });
 
-addEventListener('touchmove', e => {
-  const pt = e.touches && e.touches[0];
-  if (!pt) return;
-  const px = pt.clientX, py = pt.clientY;
-  const dx = px - lastTX, dy = py - lastTY;
-  lastTX = px;
-  lastTY = py;
-  updateTiltAndMagnet(px, py);
-  if (drag) {
-    gv.set(dx * 0.005, dy * 0.003);
-  }
-  if (run && touchScrolling) {
-    if (e.cancelable) e.preventDefault();
-    window.scrollBy(0, -dy * 1.45);
-  }
-}, { passive: false });
+let tapX = 0, tapY = 0, tapT = 0, tapPending = false;
 
-function handleDownOrTouch(e) {
-  snd.init();
-  const pt = (e.touches && e.touches[0]) || (e.changedTouches && e.changedTouches[0]) || e;
-  if (pt && pt.clientX !== undefined && pt.clientY !== undefined) {
-    lastTX = pt.clientX;
-    lastTY = pt.clientY;
-    updateTiltAndMagnet(pt.clientX, pt.clientY);
-  }
-  if (ui(e)) {
-    touchScrolling = false;
-    return;
-  }
-  touchScrolling = true;
-  if (run) {
-    ray.setFromCamera(m, cam);
-    hit = ray.intersectObjects([outer, sph, ...planes, ...interactiveNodes], false)[0] || null;
-  }
-  if (hit && run) {
+function doHit() {
+  if (!run) return false;
+  ray.setFromCamera(m, cam);
+  hit = ray.intersectObjects([outer, sph, ...planes, ...interactiveNodes], false)[0] || null;
+  if (hit) {
     if (hit.object.userData.ci !== undefined) {
       openCase(hit.object.userData.ci);
-      return;
+      return true;
     }
     if (hit.object.userData.isNode) {
       hit.object.userData.spinBoost = 3.5;
       U.uPulse.value = 1.0;
       snd.chime();
-      return;
+      return true;
     }
   }
+  return false;
+}
+
+function handleDownOrTouch(e) {
+  snd.init();
+  const touch = e.pointerType === 'touch';
+  if (e.clientX !== undefined) {
+    lastTX = e.clientX;
+    lastTY = e.clientY;
+    updateTiltAndMagnet(e.clientX, e.clientY, touch);
+  }
+  overUI = !!ui(e);
+  if (overUI) return;
+  if (touch) {
+    // a touch is a tap only if the finger doesn't travel (otherwise it is a scroll)
+    tapPending = true; tapX = e.clientX; tapY = e.clientY; tapT = performance.now();
+    if (P > 0.7 && P < 0.9) drag = true;
+    return;
+  }
+  if (doHit()) return;
   if (P > 0.7 && P < 0.9) {
     drag = true;
   }
 }
 
 addEventListener('pointerdown', handleDownOrTouch, { passive: true });
-addEventListener('touchstart', handleDownOrTouch, { passive: true });
+// iOS/Android only unlock audio from a completed touch gesture
+['touchend', 'click', 'keydown'].forEach(ev => addEventListener(ev, () => snd.init(), { passive: true }));
 
-addEventListener('pointerup', () => { drag = false; touchScrolling = false; }, { passive: true });
-addEventListener('touchend', () => { drag = false; touchScrolling = false; resetTiltAndMagnet(); }, { passive: true });
-addEventListener('touchcancel', () => { drag = false; touchScrolling = false; resetTiltAndMagnet(); }, { passive: true });
-addEventListener('keydown', e => keys[e.key.toLowerCase()] = 1);
-addEventListener('keyup', e => keys[e.key.toLowerCase()] = 0);
+addEventListener('pointerup', e => {
+  drag = false;
+  if (tapPending && e.pointerType === 'touch') {
+    if (Math.hypot(e.clientX - tapX, e.clientY - tapY) < 12 && performance.now() - tapT < 500) {
+      updateTiltAndMagnet(e.clientX, e.clientY, true);
+      doHit();
+    }
+  }
+  tapPending = false;
+  if (e.pointerType === 'touch') { overUI = false; resetTiltAndMagnet(); }
+}, { passive: true });
+addEventListener('pointercancel', () => { drag = false; tapPending = false; overUI = false; resetTiltAndMagnet(); }, { passive: true });
+addEventListener('keydown', e => { if (e.key) keys[e.key.toLowerCase()] = 1; });
+addEventListener('keyup', e => { if (e.key) keys[e.key.toLowerCase()] = 0; });
 
 $('#cx').onclick = () => {
   focus = null;
@@ -1949,6 +1939,8 @@ $$('[data-p]').forEach(a => a.onclick = () => {
   if (run) scrollTo({ top: a.dataset.p / 5 * (document.documentElement.scrollHeight - H()), behavior: 'smooth' });
 });
 
+$$('.nav a[data-p]').forEach(a => a.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); a.click(); } }));
+
 $('#snd').onclick = e => {
   snd.init();
   snd.set(!snd.on);
@@ -1960,24 +1952,11 @@ $('#calmMode').onclick = e => {
   e.target.textContent = modeName;
 };
 
-function enterExperience(e) {
-  if (e && e.cancelable && e.type === 'touchstart') e.preventDefault();
-  snd.init();
-  if (run) return;
-  snd.chime();
-  run = true;
-  shock = 0.55;
-  At = 0;
-  const o0 = $('#o0');
-  o0.classList.remove('on');
-  o0.style.pointerEvents = 'none';
-  document.body.style.overflow = 'auto';
-  document.documentElement.style.overflowY = 'auto';
-  pu.uDim.value = 0.45;
-}
-$('#enter').addEventListener('click', enterExperience);
-$('#enter').addEventListener('pointerdown', enterExperience);
-$('#enter').addEventListener('touchstart', enterExperience, { passive: false });
+// Experience starts immediately (no loading screen)
+run = true;
+shock = 0.55;
+At = 0;
+pu.uDim.value = 0.45;
 
 $('#sw').onclick = () => {
   blocks.forEach(([, b]) => {
@@ -2008,47 +1987,38 @@ $('#f').onsubmit = e => {
   setTimeout(() => toast.classList.remove('on'), 4500);
 };
 
-let pr = 0;
-const li = setInterval(() => {
-  pr = Math.min(100, Math.round(pr + 1.5 + mvv * 2));
-  At = pr / 100;
-  $('#pc').textContent = pr + '%';
-  $('#pbar').style.width = pr + '%';
-  if (pr >= 100) {
-    clearInterval(li);
-    $('#enter').style.display = 'inline-block';
-    $('#enter').style.pointerEvents = 'auto';
-  }
-}, 32);
 
 let hit = null, lastHoveredNode = null;
 const OV = ['o1', 'o2', '', 'o4', 'o5g', 'o5'];
 let fr = 0, ft = performance.now(), fps = 30, lastFrameTime = 0;
-const FPS_INTERVAL = 1000 / 30;
 const clock = new THREE.Clock();
-const targetSwarmPos = V3();
+const targetSwarmPos = V3(), _push = V3(), _ground = new THREE.Plane(V3(0, 1, 0), -0.8), _pt = V3();
+const FOG_COLS = [0x031422, 0x140826, 0x060e22, 0x021515].map(c => new THREE.Color(c));
+let FS = 1;
+const K = k => 1 - Math.pow(1 - k, FS);
+let tiltDirty = false, overUI = false, frameN = 0;
 
-function loop(now = performance.now()) {
+function loop() {
   requestAnimationFrame(loop);
-  const elapsed = now - lastFrameTime;
-  if (elapsed < FPS_INTERVAL) return;
-  lastFrameTime = now - (elapsed % FPS_INTERVAL);
   const dt = Math.min(clock.getDelta(), 0.05),
         t = clock.elapsedTime;
+  FS = dt * 30;
+  frameN++;
+  if (tiltDirty) { tiltDirty = false; applyTilt(cx, cy2); }
   U.uT.value = t;
   U.uPulse.value = Math.max(0, U.uPulse.value - dt * 0.9);
 
-  mvv = lp(mvv, Math.min(m.distanceTo(mp) * 25, 1.5), 0.1);
+  mvv = lp(mvv, Math.min(m.distanceTo(mp) * 25, 1.5), K(0.1));
   mp.copy(m);
   pu.uMV.value = mvv;
-  A = lp(A, At, 0.05);
+  A = lp(A, At, K(0.05));
   pu.uA.value = A;
 
   const mx = document.documentElement.scrollHeight - H();
-  P = lp(P, run ? scrollY / mx : 0, 0.055);
-  vel = lp(vel, (P - lastP) * 60, 0.1);
+  P = lp(P, run ? scrollY / mx : 0, K(0.055));
+  vel = lp(vel, (P - lastP) / Math.max(dt, 0.001) * 2, K(0.1));
   lastP = P;
-  snd.mod(vel, mvv);
+  if (frameN % 4 === 0) snd.mod(vel, mvv);
 
   $('#topNav').style.setProperty('--sp', (P * 100).toFixed(1) + '%');
 
@@ -2065,16 +2035,16 @@ function loop(now = performance.now()) {
     tc = V3(m.x * 1.5, m.y, 15);
     tl = V3(0, 0, 0);
   }
-  cpos.lerp(tc, 0.045);
+  cpos.lerp(tc, K(0.045));
   cam.position.copy(cpos);
-  L.lerp(tl, 0.055);
+  L.lerp(tl, K(0.055));
   cam.lookAt(L);
 
   /* 3D Cursor Projection */
   ray.setFromCamera(m, cam);
   const cursorWorld = V3();
   ray.ray.at(11, cursorWorld);
-  U.uMouse3D.value.lerp(cursorWorld, 0.15);
+  U.uMouse3D.value.lerp(cursorWorld, K(0.15));
 
   /* Zones & Navigation Active State */
   const s5 = P * 5,
@@ -2094,18 +2064,18 @@ function loop(now = performance.now()) {
   $('#specDock').classList.toggle('on', showSpecDock);
   if (showSpecDock) {
     const sp = ZONE_SPECS[cl(activeNavIdx, 0, 5)];
-    $('#st').textContent = sp[0];
-    $('#spDesc').textContent = sp[1];
-    $('#sv1').textContent = sp[2];
-    $('#sv2').textContent = sp[3];
-    $('#sv3').textContent = sp[4];
+    setT($('#st'), sp[0]);
+    setT($('#spDesc'), sp[1]);
+    setT($('#sv1'), sp[2]);
+    setT($('#sv2'), sp[3]);
+    setT($('#sv3'), sp[4]);
   }
 
   if (Math.abs(vel) > 0.15) manualBeat = null;
   const bi = manualBeat !== null ? manualBeat : cl(Math.floor((s5 - 0.7) / 0.6 * 4), 0, 3);
-  $('#bk').textContent = `TECHNICAL STACK 0${bi + 1} // 04`;
-  $('#bt').textContent = BEATS[bi][0];
-  $('#bp').textContent = BEATS[bi][1];
+  setT($('#bk'), `TECHNICAL STACK 0${bi + 1} // 04`);
+  setT($('#bt'), BEATS[bi][0]);
+  setT($('#bp'), BEATS[bi][1]);
   $$('#bPills .step-pill').forEach((el, idx) => el.classList.toggle('on', idx === bi));
   $$('#stackBtns .feat-pill').forEach((el, idx) => el.classList.toggle('act', idx === bi));
 
@@ -2114,9 +2084,9 @@ function loop(now = performance.now()) {
     const d = Math.abs(cam.position.z - 6 - a);
     if (d < bd) { bd = d; ai = i; }
   });
-  $('#ak').textContent = `SERVICE PILLAR 0${ai + 1} // 04`;
-  $('#at').textContent = ALC[ai][0];
-  $('#ap').textContent = ALC[ai][1];
+  setT($('#ak'), `SERVICE PILLAR 0${ai + 1} // 04`);
+  setT($('#at'), ALC[ai][0]);
+  setT($('#ap'), ALC[ai][1]);
   $$('#aPills .step-pill').forEach((el, idx) => el.classList.toggle('on', idx === ai));
   $$('#alcBtns .feat-pill').forEach((el, idx) => el.classList.toggle('act', idx === ai));
 
@@ -2124,8 +2094,8 @@ function loop(now = performance.now()) {
     lastIdx = ai;
     snd.chime();
   }
-  const fogT = show === 'o3' ? new THREE.Color(AC[ai]) : VOID;
-  bg.lerp(fogT, 0.04);
+  const fogT = show === 'o3' ? FOG_COLS[ai] : VOID;
+  bg.lerp(fogT, K(0.04));
   S.fog.color.copy(bg);
 
   /* Update 360-Instance Morphing Cyber-Crystal Swarm */
@@ -2186,11 +2156,11 @@ function loop(now = performance.now()) {
 
     const distToCursor = d.pos.distanceTo(U.uMouse3D.value);
     if (distToCursor < 4.2) {
-      const push = d.pos.clone().sub(U.uMouse3D.value).normalize().multiplyScalar((4.2 - distToCursor) * 0.45);
-      targetSwarmPos.add(push);
+      _push.copy(d.pos).sub(U.uMouse3D.value).normalize().multiplyScalar((4.2 - distToCursor) * 0.45);
+      targetSwarmPos.add(_push);
     }
 
-    d.pos.lerp(targetSwarmPos, 0.065);
+    d.pos.lerp(targetSwarmPos, K(0.065));
     dummy.position.copy(d.pos);
     dummy.rotation.set(t * 1.2 + i, t * 0.8 + i, 0);
     const sScale = 0.75 + Math.sin(t * 2.5 + i) * 0.3 + U.uPulse.value * 0.6;
@@ -2201,16 +2171,16 @@ function loop(now = performance.now()) {
   swarmMesh.instanceMatrix.needsUpdate = true;
 
   /* Hero Monolith & Orbital Rings */
-  mono.rotation.y = lp(mono.rotation.y, m.x * 0.65 + t * 0.08, 0.04);
-  mono.rotation.x = lp(mono.rotation.x, -m.y * 0.15, 0.04);
-  monoWire.scale.lerp(V3(expMult, expMult, expMult), 0.06);
+  mono.rotation.y = lp(mono.rotation.y, m.x * 0.65 + t * 0.08, K(0.04));
+  mono.rotation.x = lp(mono.rotation.x, -m.y * 0.15, K(0.04));
+  monoWire.scale.lerp(V3(expMult, expMult, expMult), K(0.06));
   core.rotation.y = t * 0.65;
   core.rotation.x = t * 0.42;
   gyroRings.forEach((r, idx) => {
     r.rotation.x += r.userData.sx * dt * (coreExpanded ? 2.0 : 1.0);
     r.rotation.y += r.userData.sy * dt * (coreExpanded ? 2.0 : 1.0);
     const rs = coreExpanded ? 1.25 + idx * 0.08 : 1.0;
-    r.scale.lerp(V3(rs, rs, rs), 0.06);
+    r.scale.lerp(V3(rs, rs, rs), K(0.06));
   });
   shards.forEach(s => {
     const d = s.userData;
@@ -2220,7 +2190,8 @@ function loop(now = performance.now()) {
   });
 
   /* Raycast */
-  hit = run ? ray.intersectObjects([outer, sph, ...planes, ...interactiveNodes], false)[0] || null : null;
+  if (!COARSE && frameN % 2 === 0) hit = run ? ray.intersectObjects([outer, sph, ...planes, ...interactiveNodes], false)[0] || null : null;
+  if (COARSE && Math.abs(vel) > 0.3) hit = null;
   let hr = 0, sh = 0, ph2 = -1, hovNode = null;
   if (hit) {
     if (hit.object === outer) {
@@ -2267,18 +2238,18 @@ function loop(now = performance.now()) {
     ud.r2.rotation.x += dt * (0.6 + ud.spinBoost * 2.0);
     ud.group.position.y = ud.baseY + Math.sin(t * 1.2 + ud.phase) * 0.22;
     const sc = hovNode === mesh ? 1.32 : 1.0 + ud.spinBoost * 0.1;
-    mesh.scale.lerp(V3(sc, sc, sc), 0.12);
-    ud.r1.scale.lerp(V3(sc, sc, sc), 0.12);
+    mesh.scale.lerp(V3(sc, sc, sc), K(0.12));
+    ud.r1.scale.lerp(V3(sc, sc, sc), K(0.12));
   });
 
   planes.forEach((p, i) => {
     p.userData.ci = i;
     const u = p.material.uniforms;
-    u.uV.value = lp(u.uV.value, vel * 25, 0.1);
-    u.uH.value = lp(u.uH.value, i === ph2 ? 1 : 0, 0.1);
+    u.uV.value = lp(u.uV.value, vel * 25, K(0.1));
+    u.uH.value = lp(u.uH.value, i === ph2 ? 1 : 0, K(0.1));
   });
-  dm.uniforms.uR.value = lp(dm.uniforms.uR.value, hr * 0.95, 0.08);
-  sph.material.uniforms.uH.value = lp(sph.material.uniforms.uH.value, sh, 0.08);
+  dm.uniforms.uR.value = lp(dm.uniforms.uR.value, hr * 0.95, K(0.08));
+  sph.material.uniforms.uH.value = lp(sph.material.uniforms.uH.value, sh, K(0.08));
 
   /* Strata */
   const e = cl(1 - Math.abs(s5 - 1) * 1.6, 0, 1) * (coreExpanded ? 1.25 : 1.0);
@@ -2288,7 +2259,7 @@ function loop(now = performance.now()) {
     g.rotation.y = e * (i - 1.5) * 0.5 + t * (0.05 + activeBoost * 0.2);
     g.position.x = e * (i % 2 ? 1 : -1) * 0.7;
     const sc = i === bi ? 1.08 : 1.0;
-    g.scale.lerp(V3(sc, sc, sc), 0.08);
+    g.scale.lerp(V3(sc, sc, sc), K(0.08));
   });
 
   /* Alcoves */
@@ -2304,18 +2275,18 @@ function loop(now = performance.now()) {
   pa2.needsUpdate = true;
 
   /* Globe */
-  if (!drag) gv.multiplyScalar(0.95);
-  G.rotation.y += gv.x + 0.0016;
-  G.rotation.x = cl(G.rotation.x + gv.y, -1, 1);
+  if (!drag) gv.multiplyScalar(Math.pow(0.95, FS));
+  G.rotation.y += (gv.x + 0.0016) * FS;
+  G.rotation.x = cl(G.rotation.x + gv.y * FS, -1, 1);
 
   /* Physics */
   const pz = P > 0.85 && run;
   if (pz) {
-    const pt = new THREE.Vector3();
-    ray.ray.intersectPlane(new THREE.Plane(V3(0, 1, 0), -0.8), pt);
-    if (pt && !ui({ target: document.elementFromPoint(cx, cy2) || document.body })) {
+    const pt = _pt;
+    ray.ray.intersectPlane(_ground, pt);
+    if (pt && !overUI) {
       const nx = pt.x, nz = pt.z - PZ;
-      rep.velocity.set((nx - rep.position.x) / dt, 0, (nz - rep.position.z) / dt);
+      rep.velocity.set((nx - rep.position.x) / Math.max(dt, 0.001), 0, (nz - rep.position.z) / Math.max(dt, 0.001));
       rep.position.set(cl(nx, -8, 8), 0.8, cl(nz, -8, 8));
     }
   } else {
@@ -2329,7 +2300,7 @@ function loop(now = performance.now()) {
     if (keys.a || keys.arrowleft) eb.applyForce(new CANNON.Vec3(-f, 0, 0), eb.position);
     if (keys.d || keys.arrowright) eb.applyForce(new CANNON.Vec3(f, 0, 0), eb.position);
   }
-  wd.step(1 / 30, dt, 3);
+  wd.step(1 / 60, dt, 3);
   blocks.forEach(([ms, b]) => {
     ms.position.copy(b.position);
     ms.quaternion.copy(b.quaternion);
@@ -2347,21 +2318,21 @@ function loop(now = performance.now()) {
   }
 
   /* Post-Processing & Cursor */
-  shock *= 0.94;
+  shock *= Math.pow(0.94, FS);
   bloom.strength = 0.45 + shock * 0.85;
   fin.uniforms.uAmt.value = 0.0012 + Math.abs(vel) * 0.02 + shock * 0.025;
   fin.uniforms.uT.value = t % 10;
 
   $('#cd').style.transform = `translate(${cx}px,${cy2}px)`;
   const cr = $('#cr'), k = cr._p || [cx, cy2];
-  k[0] = lp(k[0], cx, 0.18);
-  k[1] = lp(k[1], cy2, 0.18);
+  k[0] = lp(k[0], cx, K(0.18));
+  k[1] = lp(k[1], cy2, K(0.18));
   cr._p = k;
   cr.style.transform = `translate(${k[0]}px,${k[1]}px)`;
 
   fr++;
   if (performance.now() - ft > 500) {
-    fps = Math.min(30, Math.round(fr * 1000 / (performance.now() - ft)));
+    fps = Math.min(240, Math.round(fr * 1000 / (performance.now() - ft)));
     fr = 0;
     ft = performance.now();
     $('#hud').innerHTML = `FPS ${fps} · DEPTH ${Math.round(P * 100)}% · ZONE 0${run ? z + 1 : 1}<br>XYZ ${cam.position.x.toFixed(1)} ${cam.position.y.toFixed(1)} ${cam.position.z.toFixed(1)} · AUDIO ${snd.on ? CALM_MODES[snd.modeIdx].name.toUpperCase() : 'MUTED'}`;
@@ -2378,13 +2349,20 @@ function loop(now = performance.now()) {
   }
 }
 
+const lvEl = document.createElement('div');
+lvEl.style.cssText = 'position:fixed;left:0;top:0;width:0;height:100vh;height:100lvh;visibility:hidden;pointer-events:none';
+document.body.appendChild(lvEl);
+let lastRW = 0;
 function handleResize() {
-  const w = Math.max(W(), 1), h = Math.max(H(), 1);
+  const w = Math.max(W(), 1);
+  if (COARSE && lastRW && w === lastRW) return;
+  lastRW = w;
+  const h = Math.max(COARSE ? Math.max(H(), lvEl.offsetHeight) : H(), 1);
   cam.aspect = w / h;
   cam.fov = calcFov(w, h);
   cam.updateProjectionMatrix();
   R.setPixelRatio(getDPR());
-  R.setSize(w, h);
+  R.setSize(w, h, false);
   if (useComposer && comp) {
     try {
       comp.setSize(w, h);
@@ -2394,8 +2372,8 @@ function handleResize() {
   pu.uPx.value = h * R.getPixelRatio() * 0.95;
 }
 addEventListener('resize', handleResize, { passive: true });
-addEventListener('orientationchange', () => setTimeout(handleResize, 120), { passive: true });
-if (window.visualViewport) {
+addEventListener('orientationchange', () => setTimeout(() => { lastRW = 0; handleResize(); }, 160), { passive: true });
+if (window.visualViewport && !COARSE) {
   window.visualViewport.addEventListener('resize', handleResize, { passive: true });
 }
 $('#c').addEventListener('webglcontextrestored', handleResize, false);
