@@ -20,11 +20,11 @@
   padding-bottom:env(safe-area-inset-bottom,0px);
 }
 *{box-sizing:inherit}
-html,body{margin:0;background:var(--v);color:var(--ti);font:15px/1.6 Inter,sans-serif;-webkit-font-smoothing:antialiased}
+html,body{margin:0;width:100%;min-height:100%;background:var(--v);color:var(--ti);font:clamp(13.5px,1vw,15px)/1.6 Inter,sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;-webkit-text-size-adjust:100%;text-size-adjust:100%;overscroll-behavior:none}
 ::selection{background:var(--cy);color:var(--v)}
-body{overflow:hidden}
-canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
-#sc{height:750vh}
+body{overflow:hidden;overflow-x:hidden}
+canvas{position:fixed;inset:0;width:100vw;height:100vh;width:100dvw;height:100dvh;display:block;touch-action:none;-webkit-user-select:none;user-select:none}
+#sc{height:750vh;pointer-events:none}
 
 /* Soft Atmospheric Vignette */
 .fx-vignette{
@@ -35,13 +35,13 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
 /* Top Navigation Bar (Refractive Crystal Glass) */
 .nav{
   position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;
-  display:flex;gap:14px;align-items:center;padding:11px 22px;
+  display:flex;gap:clamp(6px,1.1vw,14px);align-items:center;padding:clamp(8px,1.2vh,11px) clamp(10px,1.8vw,22px);
   background:linear-gradient(135deg,rgba(255,255,255,.08) 0%,rgba(0,216,232,.04) 50%,rgba(8,14,28,.42) 100%);
-  backdrop-filter:blur(20px) saturate(190%) brightness(1.1);
   -webkit-backdrop-filter:blur(20px) saturate(190%) brightness(1.1);
+  backdrop-filter:blur(20px) saturate(190%) brightness(1.1);
   border-bottom:1px solid rgba(255,255,255,.18);
   box-shadow:0 12px 36px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.28);
-  font:12px 'JetBrains Mono',monospace;z-index:6;flex-wrap:wrap;
+  font:clamp(10.5px,.85vw,12px) 'JetBrains Mono',monospace;z-index:6;flex-wrap:wrap;
 }
 .nav::after{
   content:'';position:absolute;bottom:-1px;left:0;height:1.5px;width:var(--sp,0%);
@@ -50,16 +50,18 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
 }
 .brand-wrap{
   display:flex;align-items:center;gap:8px;cursor:pointer;
-  padding-right:12px;border-right:1px solid rgba(255,255,255,.18);
+  padding-right:clamp(8px,1vw,12px);border-right:1px solid rgba(255,255,255,.18);
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
 }
 .nav b{
-  font:800 19px Syne,sans-serif;letter-spacing:.15em;
+  font:800 clamp(15px,1.4vw,19px) Syne,sans-serif;letter-spacing:.15em;
   color:var(--ti);transition:color .25s ease;
 }
 .brand-wrap:hover b{color:var(--cy)}
 .nav a,.nav button{
   cursor:pointer;color:var(--ti);opacity:.78;background:none;border:0;font:inherit;
-  padding:6px 10px;border-radius:6px;transition:all .25s ease;position:relative;
+  padding:clamp(4px,.6vh,6px) clamp(6px,.8vw,10px);border-radius:6px;transition:all .25s ease;position:relative;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
 }
 .nav a:hover,.nav a.act{
   opacity:1;color:var(--cy);background:rgba(255,255,255,.08);
@@ -72,6 +74,8 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
 .snd-group{
   display:flex;align-items:center;gap:6px;
   background:linear-gradient(135deg,rgba(255,255,255,.1),rgba(0,216,232,.05));
+  -webkit-backdrop-filter:blur(12px) saturate(160%);
+  backdrop-filter:blur(12px) saturate(160%);
   border:1px solid rgba(255,255,255,.22);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.3);
   border-radius:999px;padding:2px 10px 2px 8px;
@@ -110,7 +114,8 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
 
 /* Section Overlays with 3D Perspective Stage */
 .ov{
-  position:fixed;left:4vw;bottom:7vh;max-width:min(590px,90vw);
+  position:fixed;left:clamp(12px,4vw,64px);bottom:clamp(42px,6.8vh,76px);
+  width:min(590px,92vw);max-width:min(590px,92vw);max-height:calc(100dvh - 96px);
   opacity:0;transform:translateY(26px) scale(.96);
   pointer-events:none;
   perspective:1200px;
@@ -148,7 +153,8 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
   border-left:1px solid rgba(255,255,255,.28);
   border-right:1px solid rgba(0,216,232,.28);
   border-bottom:1px solid rgba(0,216,232,.32);
-  padding:26px 28px;
+  padding:clamp(16px,2.6vh,26px) clamp(16px,2.6vw,28px);
+  scrollbar-width:none;-ms-overflow-style:none;
   box-shadow:
     0 28px 68px -12px rgba(0,0,0,.62),
     0 0 38px rgba(0,216,232,.11),
@@ -190,6 +196,8 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
   content:'';position:absolute;inset:8px -8px -8px 8px;border-radius:18px;
   pointer-events:none;
   background:linear-gradient(135deg,rgba(0,216,232,.08),rgba(123,44,191,.08));
+  -webkit-backdrop-filter:blur(8px);
+  backdrop-filter:blur(8px);
   border:1px solid rgba(0,216,232,.22);
   transform:translateZ(-22px);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.15);
@@ -217,29 +225,30 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
   box-shadow:0 0 8px var(--cy);
 }
 .ov h1,.ov h2{
-  font:800 clamp(26px,4.2vw,52px)/1.05 Syne,sans-serif;
-  margin:0 0 12px;letter-spacing:.02em;text-transform:uppercase;
+  font:800 clamp(21px,min(4.2vw,5vh),52px)/1.05 Syne,sans-serif;
+  margin:0 0 clamp(8px,1.4vh,12px);letter-spacing:.02em;text-transform:uppercase;
   background:linear-gradient(180deg,#FFFFFF 0%,#E2F7FF 65%,#9EEFFF 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
   filter:drop-shadow(0 10px 22px rgba(0,0,0,.62));
   transform:translateZ(42px);
 }
-.ov h2{font-size:clamp(21px,2.9vw,36px)}
+.ov h2{font-size:clamp(18px,min(2.9vw,4vh),36px)}
 .ov p{
-  max-width:52ch;color:rgba(244,248,252,.9);margin:0 0 16px;font-size:14.5px;
+  max-width:52ch;color:rgba(244,248,252,.9);margin:0 0 clamp(10px,1.8vh,16px);font-size:clamp(12.5px,min(1.05vw,2vh),14.5px);
   text-shadow:0 4px 14px rgba(0,0,0,.75);
   transform:translateZ(22px);
 }
 
 /* 3D Glass Feature Capsules inside Cards */
 .feat-grid{
-  display:grid;grid-template-columns:repeat(2,1fr);gap:9px;
-  margin:0 0 18px;font:11.5px 'JetBrains Mono',monospace;pointer-events:auto;
+  display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(6px,1vh,9px);
+  margin:0 0 clamp(10px,2vh,18px);font:clamp(10px,.9vw,11.5px) 'JetBrains Mono',monospace;pointer-events:auto;
   transform-style:preserve-3d;
   transform:translateZ(32px);
 }
 .feat-pill{
-  padding:9px 12px;border-radius:10px;
+  padding:clamp(7px,1vh,9px) clamp(9px,1vw,12px);border-radius:10px;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
   background:linear-gradient(135deg,rgba(255,255,255,.12) 0%,rgba(0,216,232,.05) 100%);
   backdrop-filter:blur(12px);
   -webkit-backdrop-filter:blur(12px);
@@ -266,16 +275,17 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
 .btn-row{transform:translateZ(36px);transform-style:preserve-3d}
 .btn{
   pointer-events:auto;cursor:pointer;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
   background:linear-gradient(135deg,rgba(255,255,255,.15) 0%,rgba(0,216,232,.14) 100%);
-  backdrop-filter:blur(14px);
   -webkit-backdrop-filter:blur(14px);
+  backdrop-filter:blur(14px);
   color:#d8f9ff;
   border-top:1px solid rgba(255,255,255,.55);
   border-left:1px solid rgba(255,255,255,.32);
   border-right:1px solid rgba(0,216,232,.5);
   border-bottom:1px solid rgba(0,216,232,.55);
   box-shadow:0 10px 24px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.48);
-  padding:12px 19px;font:600 11px 'JetBrains Mono',monospace;letter-spacing:.12em;
+  padding:clamp(9px,1.4vh,12px) clamp(13px,1.5vw,19px);font:600 clamp(10px,.85vw,11px) 'JetBrains Mono',monospace;letter-spacing:.12em;
   margin-right:8px;margin-bottom:6px;border-radius:10px;
   transition:all .25s cubic-bezier(.16,1,.3,1);
   text-transform:uppercase;
@@ -321,6 +331,8 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
   display:flex;justify-content:space-between;align-items:center;
   padding:8px 11px;border-radius:8px;
   background:linear-gradient(135deg,rgba(255,255,255,.1),rgba(0,216,232,.04));
+  -webkit-backdrop-filter:blur(10px);
+  backdrop-filter:blur(10px);
   border:1px solid rgba(255,255,255,.22);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.28);
 }
@@ -328,9 +340,12 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
 .spec-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;transform:translateZ(30px)}
 .mini-btn{
   cursor:pointer;pointer-events:auto;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
   font:600 10.5px 'JetBrains Mono',monospace;letter-spacing:.1em;
   padding:7px 11px;border-radius:7px;
   background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(0,216,232,.08));
+  -webkit-backdrop-filter:blur(10px);
+  backdrop-filter:blur(10px);
   color:#d8f9ff;
   border:1px solid rgba(255,255,255,.32);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.35);
@@ -345,15 +360,17 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
 
 /* Preloader Overlay (#o0) */
 #o0{
-  inset:0;left:0;bottom:0;max-width:none;display:grid;place-content:center;
-  text-align:center;transform:none;
+  inset:0;left:0;bottom:0;width:100%;max-width:none;max-height:none;display:grid;place-content:center;
+  text-align:center;transform:none;padding:16px;
   background:radial-gradient(circle at 50% 50%, rgba(3,8,18,.28) 0%, rgba(2,4,8,.86) 100%);
 }
+#o0.on{pointer-events:auto}
 .pre-card{
-  padding:38px 46px;border-radius:20px;
+  padding:clamp(22px,4vh,38px) clamp(18px,4vw,46px);border-radius:20px;
+  width:min(560px,92vw);pointer-events:auto;
   background:linear-gradient(135deg,rgba(255,255,255,.12) 0%,rgba(10,22,46,.32) 100%);
-  backdrop-filter:blur(22px) saturate(190%);
   -webkit-backdrop-filter:blur(22px) saturate(190%);
+  backdrop-filter:blur(22px) saturate(190%);
   border-top:1px solid rgba(255,255,255,.45);
   border-left:1px solid rgba(255,255,255,.28);
   border-right:1px solid rgba(0,216,232,.3);
@@ -362,7 +379,7 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
   display:flex;flex-direction:column;align-items:center;
 }
 #o0 .n{
-  font:800 clamp(52px,8.5vw,108px)/1 Syne,sans-serif;
+  font:800 clamp(44px,min(8.5vw,11vh),108px)/1 Syne,sans-serif;
   color:var(--cy);
   margin:6px 0 12px;
 }
@@ -375,7 +392,7 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
   background:linear-gradient(90deg,var(--co),var(--cy));
   transition:width .1s linear;
 }
-#o0 .btn{display:none;margin-top:8px}
+#o0 .btn{display:none;margin-top:8px;touch-action:manipulation;pointer-events:auto}
 
 /* Strata & Alcove Pills */
 .step-pills{display:flex;gap:6px;margin-bottom:12px;pointer-events:auto;transform:translateZ(28px)}
@@ -389,20 +406,25 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
 .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;font:11.5px 'JetBrains Mono',monospace;margin-top:12px;transform:translateZ(32px)}
 .stats > div{
   background:linear-gradient(135deg,rgba(255,255,255,.11),rgba(0,216,232,.05));
+  -webkit-backdrop-filter:blur(10px);
+  backdrop-filter:blur(10px);
   border:1px solid rgba(255,255,255,.24);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.32);
-  padding:10px 14px;border-radius:10px;
+  padding:clamp(8px,1.2vh,10px) clamp(10px,1.4vw,14px);border-radius:10px;
 }
 .stats span{
-  display:block;font:800 22px/1.15 Syne,sans-serif;color:var(--cy);
+  display:block;font:800 clamp(17px,2vw,22px)/1.15 Syne,sans-serif;color:var(--cy);
   margin-bottom:2px;
 }
 
 /* Portfolio Quick Selector Pills */
 .work-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;pointer-events:auto;transform:translateZ(34px)}
 .work-chip{
-  font:11px 'JetBrains Mono',monospace;padding:7px 12px;border-radius:8px;
+  font:clamp(10px,.9vw,11px) 'JetBrains Mono',monospace;padding:7px 12px;border-radius:8px;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
   background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(0,216,232,.06));
+  -webkit-backdrop-filter:blur(10px);
+  backdrop-filter:blur(10px);
   border:1px solid rgba(255,255,255,.28);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.32);
   color:var(--ti);cursor:pointer;transition:all .22s ease;
@@ -466,7 +488,32 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
   border:1px solid rgba(0,216,232,.65);
   transition:width .2s,height .2s,margin .2s,border-color .2s,background .2s;
 }
-@media(hover:none){#cd,#cr{display:none}}
+@media(hover:none),(pointer:coarse){#cd,#cr{display:none}}
+@media(max-width:960px){
+  .nav .t{display:none}
+  .snd-group{margin-left:auto}
+}
+@media(max-width:768px){
+  .ov{left:4vw;right:4vw;width:92vw;max-width:92vw;bottom:clamp(44px,6vh,68px)}
+  #o5{left:4vw;right:4vw;width:92vw;max-width:92vw}
+  #case{left:4vw;right:4vw;top:auto;bottom:clamp(50px,7vh,76px);width:92vw;max-width:92vw}
+  .node-inspector{top:auto;bottom:46px;font-size:10px;padding:5px 12px;max-width:92vw;overflow:hidden;text-overflow:ellipsis}
+  .hud{right:4vw;left:4vw;bottom:6px;text-align:center;font-size:9.5px;padding:5px 10px}
+}
+@media(max-width:480px){
+  .feat-grid{grid-template-columns:1fr}
+  .btn-row{display:flex;flex-direction:column;gap:6px}
+  .btn-row .btn{width:100%;margin-right:0;text-align:center}
+  .kicker{font-size:9.5px;letter-spacing:.12em;padding:6px 10px}
+}
+.g::-webkit-scrollbar,.ov::-webkit-scrollbar{display:none;width:0;height:0}
+@media(max-height:680px){
+  .ov{bottom:clamp(36px,4.5vh,52px)}
+  .g{padding:14px 18px}
+  .ov h1,.ov h2{margin-bottom:6px}
+  .ov p{margin-bottom:10px;line-height:1.45}
+  .feat-grid{margin-bottom:10px;gap:6px}
+}
 </style>
 </head>
 <body>
@@ -684,11 +731,21 @@ class WebzoSoundEngine {
     this.modeIdx = 0;
   }
   init() {
-    if (this.ctx) {
-      if (this.ctx.state === 'suspended') this.ctx.resume();
-      return;
-    }
-    const c = this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    try {
+      if (this.ctx) {
+        if (this.ctx.state === 'suspended') {
+          const p = this.ctx.resume();
+          if (p && p.catch) p.catch(() => {});
+        }
+        return;
+      }
+      const ACtx = window.AudioContext || window.webkitAudioContext;
+      if (!ACtx) return;
+      const c = this.ctx = new ACtx();
+      if (c.state === 'suspended') {
+        const p = c.resume();
+        if (p && p.catch) p.catch(() => {});
+      }
     this.m = c.createGain();
     this.m.gain.value = this.on ? 0.42 : 0;
 
@@ -781,13 +838,14 @@ class WebzoSoundEngine {
     padGain.connect(this.m);
     padGain.connect(this.delL);
 
-    this.chimeTimer = setInterval(() => {
-      if (this.on && this.ctx && this.ctx.state === 'running' && Math.random() < 0.42) {
-        const sc = CALM_MODES[this.modeIdx].scale;
-        const f = sc[Math.floor(Math.random() * sc.length)] * (Math.random() < 0.35 ? 0.5 : 1);
-        this.tone(f, 3.2, 'sine', 0.015);
-      }
-    }, 3600);
+      this.chimeTimer = setInterval(() => {
+        if (this.on && this.ctx && this.ctx.state === 'running' && Math.random() < 0.42) {
+          const sc = CALM_MODES[this.modeIdx].scale;
+          const f = sc[Math.floor(Math.random() * sc.length)] * (Math.random() < 0.35 ? 0.5 : 1);
+          this.tone(f, 3.2, 'sine', 0.015);
+        }
+      }, 3600);
+    } catch (err) {}
   }
   cycleMode() {
     this.init();
@@ -819,9 +877,14 @@ class WebzoSoundEngine {
     }
   }
   tone(f, d, ty = 'sine', vol = 0.025) {
-    const c = this.ctx;
-    if (!c || !this.on) return;
-    const now = c.currentTime;
+    try {
+      const c = this.ctx;
+      if (!c || !this.on) return;
+      if (c.state === 'suspended') {
+        const p = c.resume();
+        if (p && p.catch) p.catch(() => {});
+      }
+      const now = c.currentTime;
     const o = c.createOscillator(), g = c.createGain();
     o.type = ty;
     o.frequency.setValueAtTime(f, now);
@@ -831,8 +894,9 @@ class WebzoSoundEngine {
     o.connect(g);
     g.connect(this.m);
     if (this.delL) g.connect(this.delL);
-    o.start(now);
-    o.stop(now + d + 0.05);
+      o.start(now);
+      o.stop(now + d + 0.05);
+    } catch (err) {}
   }
   chime() {
     const sc = CALM_MODES[this.modeIdx].scale;
@@ -851,20 +915,35 @@ const snd = new WebzoSoundEngine();
 /* ==========================================================================
    THREE.JS RENDERER & CINEMATIC POST-PROCESSING
    ========================================================================== */
-const R = new THREE.WebGLRenderer({ canvas: $('#c'), powerPreference: 'high-performance', antialias: true });
-R.setPixelRatio(Math.min(devicePixelRatio, 1.8));
+const MAX_DPR = 1.5;
+const getDPR = () => Math.min(window.devicePixelRatio || 1, MAX_DPR);
+let R;
+try {
+  R = new THREE.WebGLRenderer({ canvas: $('#c'), powerPreference: 'high-performance', antialias: getDPR() <= 1.25 });
+} catch (err) {
+  R = new THREE.WebGLRenderer({ canvas: $('#c'), antialias: false });
+}
+R.setPixelRatio(getDPR());
 R.setSize(W(), H());
 R.toneMapping = THREE.ACESFilmicToneMapping;
 R.toneMappingExposure = 0.9;
+
+$('#c').addEventListener('webglcontextlost', e => e.preventDefault(), false);
 
 const S = new THREE.Scene(),
       VOID = new THREE.Color(0x020408),
       bg = VOID.clone();
 S.background = bg;
 S.fog = new THREE.FogExp2(0x020408, 0.0108);
-S.environment = new THREE.PMREMGenerator(R).fromScene(new RoomEnvironment(), 0.04).texture;
+try {
+  S.environment = new THREE.PMREMGenerator(R).fromScene(new RoomEnvironment(), 0.04).texture;
+} catch (err) {}
 
-const cam = new THREE.PerspectiveCamera(50, W() / H(), 0.1, 420);
+const calcFov = (w, h) => {
+  const asp = w / Math.max(h, 1);
+  return asp < 1 ? cl(50 / Math.pow(asp, 0.45), 50, 76) : (h < 680 ? 54 : 50);
+};
+const cam = new THREE.PerspectiveCamera(calcFov(W(), H()), W() / Math.max(H(), 1), 0.1, 420);
 S.add(cam);
 const pl = new THREE.PointLight(0x00d8e8, 34, 54);
 cam.add(pl);
@@ -875,36 +954,43 @@ const dl2 = new THREE.DirectionalLight(0x0051ff, 1.15);
 dl2.position.set(8, -6, -12);
 S.add(dl2);
 
-const comp = new EffectComposer(R);
-comp.addPass(new RenderPass(S, cam));
-const bloom = new UnrealBloomPass(new THREE.Vector2(W(), H()), 0.45, 0.52, 0.55);
-comp.addPass(bloom);
+let comp = null, bloom = { strength: 0.45 }, fin = { uniforms: { uAmt: { value: 0.0014 }, uT: { value: 0 } } };
+let useComposer = false;
+try {
+  comp = new EffectComposer(R);
+  comp.addPass(new RenderPass(S, cam));
+  bloom = new UnrealBloomPass(new THREE.Vector2(W(), H()), 0.45, 0.52, 0.55);
+  comp.addPass(bloom);
 
-const fin = new ShaderPass({
-  uniforms: { tDiffuse: { value: null }, uAmt: { value: 0.0014 }, uT: { value: 0 } },
-  vertexShader: 'varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,0.,1.);}',
-  fragmentShader: `
-    uniform sampler2D tDiffuse;
-    uniform float uAmt, uT;
-    varying vec2 vUv;
-    void main(){
-      vec2 centered = vUv - 0.5;
-      vec2 d = centered * uAmt * (1.0 + dot(centered, centered) * 1.2);
-      vec4 c = vec4(
-        texture2D(tDiffuse, vUv + d).r,
-        texture2D(tDiffuse, vUv).g,
-        texture2D(tDiffuse, vUv - d).b,
-        1.0
-      );
-      c.rgb = c.rgb / (1.0 + c.rgb * 0.2);
-      float vig = smoothstep(0.98, 0.22, length(centered));
-      c.rgb *= mix(0.72, 1.0, vig);
-      c.rgb += (fract(sin(dot(vUv * 1000.0 + uT, vec2(12.9898,78.233))) * 43758.5453) - 0.5) * 0.018;
-      gl_FragColor = c;
-    }`
-});
-comp.addPass(fin);
-comp.addPass(new OutputPass());
+  fin = new ShaderPass({
+    uniforms: { tDiffuse: { value: null }, uAmt: { value: 0.0014 }, uT: { value: 0 } },
+    vertexShader: 'varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,0.,1.);}',
+    fragmentShader: `
+      uniform sampler2D tDiffuse;
+      uniform float uAmt, uT;
+      varying vec2 vUv;
+      void main(){
+        vec2 centered = vUv - 0.5;
+        vec2 d = centered * uAmt * (1.0 + dot(centered, centered) * 1.2);
+        vec4 c = vec4(
+          texture2D(tDiffuse, vUv + d).r,
+          texture2D(tDiffuse, vUv).g,
+          texture2D(tDiffuse, vUv - d).b,
+          1.0
+        );
+        c.rgb = c.rgb / (1.0 + c.rgb * 0.2);
+        float vig = smoothstep(0.98, 0.22, length(centered));
+        c.rgb *= mix(0.72, 1.0, vig);
+        c.rgb += (fract(sin(dot(vUv * 1000.0 + uT, vec2(12.9898,78.233))) * 43758.5453) - 0.5) * 0.018;
+        gl_FragColor = c;
+      }`
+  });
+  comp.addPass(fin);
+  comp.addPass(new OutputPass());
+  useComposer = true;
+} catch (err) {
+  useComposer = false;
+}
 
 const U = { uT: { value: 0 }, uPulse: { value: 0 }, uMouse3D: { value: V3(0, 2, 0) } };
 
@@ -1675,21 +1761,20 @@ function openCase(idx) {
   snd.chime();
 }
 
-addEventListener('pointermove', e => {
-  m.set(e.clientX / W() * 2 - 1, -e.clientY / H() * 2 + 1);
-  cx = e.clientX;
-  cy2 = e.clientY;
-  if (drag) {
-    gv.set(e.movementX * 0.005, e.movementY * 0.003);
-  }
+let lastTX = 0, lastTY = 0, touchScrolling = false;
+
+function updateTiltAndMagnet(px, py) {
+  m.set(px / Math.max(W(), 1) * 2 - 1, -py / Math.max(H(), 1) * 2 + 1);
+  cx = px;
+  cy2 = py;
   // Real-Time 3D Glass Tilt & Specular Glare Tracking on all active .g cards
   $$('.g').forEach(card => {
     const r = card.getBoundingClientRect();
     if (r.width === 0 || r.height === 0) return;
-    const gx = cl(((e.clientX - r.left) / r.width) * 100, 0, 100);
-    const gy = cl(((e.clientY - r.top) / r.height) * 100, 0, 100);
-    const nx = ((e.clientX - (r.left + r.width / 2)) / (W() * 0.5));
-    const ny = ((e.clientY - (r.top + r.height / 2)) / (H() * 0.5));
+    const gx = cl(((px - r.left) / r.width) * 100, 0, 100);
+    const gy = cl(((py - r.top) / r.height) * 100, 0, 100);
+    const nx = ((px - (r.left + r.width / 2)) / (Math.max(W(), 1) * 0.5));
+    const ny = ((py - (r.top + r.height / 2)) / (Math.max(H(), 1) * 0.5));
     const rx = cl(-ny * 9, -10, 10).toFixed(2) + 'deg';
     const ry = cl(nx * 11, -12, 12).toFixed(2) + 'deg';
     card.style.setProperty('--gx', gx.toFixed(1) + '%');
@@ -1699,16 +1784,70 @@ addEventListener('pointermove', e => {
   });
 
   $$('.mag').forEach(b => {
-    const r = b.getBoundingClientRect(),
-          dx = e.clientX - r.left - r.width / 2,
-          dy = e.clientY - r.top - r.height / 2;
+    const r = b.getBoundingClientRect();
+    if (r.width === 0 || r.height === 0) return;
+    const dx = px - r.left - r.width / 2,
+          dy = py - r.top - r.height / 2;
     b.style.transform = Math.hypot(dx, dy) < 90 ? `translate3d(${dx * 0.25}px,${dy * 0.25}px,46px)` : '';
   });
-});
+}
 
-addEventListener('pointerdown', e => {
+function resetTiltAndMagnet() {
+  $$('.g').forEach(card => {
+    card.style.setProperty('--rx', '0deg');
+    card.style.setProperty('--ry', '0deg');
+  });
+  $$('.mag').forEach(b => { b.style.transform = ''; });
+}
+
+addEventListener('pointermove', e => {
+  const pt = (e.touches && e.touches[0]) || e;
+  const px = pt.clientX !== undefined ? pt.clientX : cx;
+  const py = pt.clientY !== undefined ? pt.clientY : cy2;
+  const dx = e.movementX !== undefined ? e.movementX : (px - lastTX);
+  const dy = e.movementY !== undefined ? e.movementY : (py - lastTY);
+  lastTX = px;
+  lastTY = py;
+  updateTiltAndMagnet(px, py);
+  if (drag) {
+    gv.set(dx * 0.005, dy * 0.003);
+  }
+}, { passive: true });
+
+addEventListener('touchmove', e => {
+  const pt = e.touches && e.touches[0];
+  if (!pt) return;
+  const px = pt.clientX, py = pt.clientY;
+  const dx = px - lastTX, dy = py - lastTY;
+  lastTX = px;
+  lastTY = py;
+  updateTiltAndMagnet(px, py);
+  if (drag) {
+    gv.set(dx * 0.005, dy * 0.003);
+  }
+  if (run && touchScrolling) {
+    if (e.cancelable) e.preventDefault();
+    window.scrollBy(0, -dy * 1.45);
+  }
+}, { passive: false });
+
+function handleDownOrTouch(e) {
   snd.init();
-  if (ui(e)) return;
+  const pt = (e.touches && e.touches[0]) || (e.changedTouches && e.changedTouches[0]) || e;
+  if (pt && pt.clientX !== undefined && pt.clientY !== undefined) {
+    lastTX = pt.clientX;
+    lastTY = pt.clientY;
+    updateTiltAndMagnet(pt.clientX, pt.clientY);
+  }
+  if (ui(e)) {
+    touchScrolling = false;
+    return;
+  }
+  touchScrolling = true;
+  if (run) {
+    ray.setFromCamera(m, cam);
+    hit = ray.intersectObjects([outer, sph, ...planes, ...interactiveNodes], false)[0] || null;
+  }
   if (hit && run) {
     if (hit.object.userData.ci !== undefined) {
       openCase(hit.object.userData.ci);
@@ -1724,9 +1863,14 @@ addEventListener('pointerdown', e => {
   if (P > 0.7 && P < 0.9) {
     drag = true;
   }
-});
+}
 
-addEventListener('pointerup', () => drag = false);
+addEventListener('pointerdown', handleDownOrTouch, { passive: true });
+addEventListener('touchstart', handleDownOrTouch, { passive: true });
+
+addEventListener('pointerup', () => { drag = false; touchScrolling = false; }, { passive: true });
+addEventListener('touchend', () => { drag = false; touchScrolling = false; resetTiltAndMagnet(); }, { passive: true });
+addEventListener('touchcancel', () => { drag = false; touchScrolling = false; resetTiltAndMagnet(); }, { passive: true });
 addEventListener('keydown', e => keys[e.key.toLowerCase()] = 1);
 addEventListener('keyup', e => keys[e.key.toLowerCase()] = 0);
 
@@ -1816,16 +1960,24 @@ $('#calmMode').onclick = e => {
   e.target.textContent = modeName;
 };
 
-$('#enter').onclick = () => {
+function enterExperience(e) {
+  if (e && e.cancelable && e.type === 'touchstart') e.preventDefault();
   snd.init();
+  if (run) return;
   snd.chime();
   run = true;
   shock = 0.55;
   At = 0;
-  $('#o0').classList.remove('on');
+  const o0 = $('#o0');
+  o0.classList.remove('on');
+  o0.style.pointerEvents = 'none';
   document.body.style.overflow = 'auto';
+  document.documentElement.style.overflowY = 'auto';
   pu.uDim.value = 0.45;
-};
+}
+$('#enter').addEventListener('click', enterExperience);
+$('#enter').addEventListener('pointerdown', enterExperience);
+$('#enter').addEventListener('touchstart', enterExperience, { passive: false });
 
 $('#sw').onclick = () => {
   blocks.forEach(([, b]) => {
@@ -1871,12 +2023,16 @@ const li = setInterval(() => {
 
 let hit = null, lastHoveredNode = null;
 const OV = ['o1', 'o2', '', 'o4', 'o5g', 'o5'];
-let fr = 0, ft = performance.now(), fps = 60;
+let fr = 0, ft = performance.now(), fps = 30, lastFrameTime = 0;
+const FPS_INTERVAL = 1000 / 30;
 const clock = new THREE.Clock();
 const targetSwarmPos = V3();
 
-function loop() {
+function loop(now = performance.now()) {
   requestAnimationFrame(loop);
+  const elapsed = now - lastFrameTime;
+  if (elapsed < FPS_INTERVAL) return;
+  lastFrameTime = now - (elapsed % FPS_INTERVAL);
   const dt = Math.min(clock.getDelta(), 0.05),
         t = clock.elapsedTime;
   U.uT.value = t;
@@ -2173,7 +2329,7 @@ function loop() {
     if (keys.a || keys.arrowleft) eb.applyForce(new CANNON.Vec3(-f, 0, 0), eb.position);
     if (keys.d || keys.arrowright) eb.applyForce(new CANNON.Vec3(f, 0, 0), eb.position);
   }
-  wd.step(1 / 60, dt, 3);
+  wd.step(1 / 30, dt, 3);
   blocks.forEach(([ms, b]) => {
     ms.position.copy(b.position);
     ms.quaternion.copy(b.quaternion);
@@ -2205,21 +2361,45 @@ function loop() {
 
   fr++;
   if (performance.now() - ft > 500) {
-    fps = Math.round(fr * 1000 / (performance.now() - ft));
+    fps = Math.min(30, Math.round(fr * 1000 / (performance.now() - ft)));
     fr = 0;
     ft = performance.now();
     $('#hud').innerHTML = `FPS ${fps} · DEPTH ${Math.round(P * 100)}% · ZONE 0${run ? z + 1 : 1}<br>XYZ ${cam.position.x.toFixed(1)} ${cam.position.y.toFixed(1)} ${cam.position.z.toFixed(1)} · AUDIO ${snd.on ? CALM_MODES[snd.modeIdx].name.toUpperCase() : 'MUTED'}`;
   }
-  comp.render();
+  if (useComposer && comp) {
+    try {
+      comp.render();
+    } catch (err) {
+      useComposer = false;
+      R.render(S, cam);
+    }
+  } else {
+    R.render(S, cam);
+  }
 }
 
-addEventListener('resize', () => {
-  cam.aspect = W() / H();
+function handleResize() {
+  const w = Math.max(W(), 1), h = Math.max(H(), 1);
+  cam.aspect = w / h;
+  cam.fov = calcFov(w, h);
   cam.updateProjectionMatrix();
-  R.setSize(W(), H());
-  comp.setSize(W(), H());
-  pu.uPx.value = H() * R.getPixelRatio() * 0.95;
-});
+  R.setPixelRatio(getDPR());
+  R.setSize(w, h);
+  if (useComposer && comp) {
+    try {
+      comp.setSize(w, h);
+      if (bloom && bloom.resolution) bloom.resolution.set(w, h);
+    } catch (err) {}
+  }
+  pu.uPx.value = h * R.getPixelRatio() * 0.95;
+}
+addEventListener('resize', handleResize, { passive: true });
+addEventListener('orientationchange', () => setTimeout(handleResize, 120), { passive: true });
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', handleResize, { passive: true });
+}
+$('#c').addEventListener('webglcontextrestored', handleResize, false);
+handleResize();
 loop();
 </script>
 </body>
